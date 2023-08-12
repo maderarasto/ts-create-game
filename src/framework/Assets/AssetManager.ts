@@ -61,6 +61,17 @@ export default class AssetManager {
         return manager?.get(key);
     }
 
+    clear(type?: AssetType) {
+        if (type !== undefined) {
+            const manager = this.managersMap.get(type);
+            manager?.clear();
+        }
+
+        this.managersMap.forEach((assets) => {
+            assets.clear();
+        })
+    }
+
     private checkAssetSupport(path: string) {
         let supported = false;
 
