@@ -23,7 +23,7 @@ export default class Application {
         this._running = false;
         
         this.assets = new AssetManager();
-        this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks`, 'TANK_BLUE').catch(err => console.log(err));
+        this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').catch(err => console.log(err));
     }
 
     get config() {
