@@ -11,7 +11,10 @@ node_modules
 dist
 dist-ssr
 *.local
-src/assets
+
+# Assets
+src/assets/images/*
+!src/assets/images/Tanks/
 
 # Editor directories and files
 .vscode/*
