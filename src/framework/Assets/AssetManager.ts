@@ -1,10 +1,18 @@
+type AssetType = 'image';
+type Asset = HTMLElement;
+type AssetMap = Map<string, Asset>;
+
 export default class AssetManager {
     private static readonly SUPPORTED_IMAGE_EXT = ['.png', '.jpeg', '.jpg', '.gif', '.bmp', '.webp'];
 
     private imageAssets: Map<string, HTMLImageElement>;
+    private managersMap: Map<AssetType, AssetMap>;
 
     constructor() {
         this.imageAssets = new Map();
+        this.managersMap = new Map([
+            ['image', this.imageAssets]
+        ]);
     }
     
     async loadImage(path: string, key: string): Promise<void> {
@@ -43,12 +51,14 @@ export default class AssetManager {
         })
     }
 
-    getImage(key: string): HTMLImageElement|undefined {
-        if (!this.imageAssets.has(key)) {
+    get(type: AssetType, key: string): Asset|undefined {
+        const manager = this.managersMap.get(type);
+
+        if (!manager?.has(key)) {
             throw new Error('Image asset with given key not found!');
         }
 
-        return this.imageAssets.get(key);
+        return manager?.get(key);
     }
 
     private checkAssetSupport(path: string) {

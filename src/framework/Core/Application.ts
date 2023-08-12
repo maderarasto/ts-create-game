@@ -89,6 +89,9 @@ export default class Application {
             (this.config.default.width - context.measureText('Hello World').width) / 2,
             (this.config.default.height - 24) / 2,
         );
+
+        const blueTank = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
+        context.drawImage(blueTank, 10, 10, 32, 32);
     }
 
     private getTimeSinceStart() {
