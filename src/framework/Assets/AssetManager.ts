@@ -2,6 +2,9 @@ type AssetType = 'image';
 type Asset = HTMLElement;
 type AssetMap = Map<string, Asset>;
 
+/**
+ * Represents manager that can load and maintain assets for application.
+ */
 export default class AssetManager {
     private static readonly SUPPORTED_IMAGE_EXT = ['.png', '.jpeg', '.jpg', '.gif', '.bmp', '.webp'];
 
@@ -15,6 +18,13 @@ export default class AssetManager {
         ]);
     }
     
+    /**
+     * Load an image from path a store it with given unique key.
+     * 
+     * @param path path to image file
+     * @param key unique key
+     * @returns promised result
+     */
     async loadImage(path: string, key: string): Promise<void> {
         return new Promise((resolve, reject) => {
             const request = new XMLHttpRequest();
@@ -51,6 +61,13 @@ export default class AssetManager {
         })
     }
 
+    /**
+     * Access to assets by its type and unique key.
+     * 
+     * @param type type of asset
+     * @param key unique key
+     * @returns asset
+     */
     get(type: AssetType, key: string): Asset|undefined {
         const manager = this.managersMap.get(type);
 
@@ -61,6 +78,11 @@ export default class AssetManager {
         return manager?.get(key);
     }
 
+    /**
+     * Clear assets. If type is provided then clear only assets for specific type.
+     * 
+     * @param type type of assets
+     */
     clear(type?: AssetType) {
         if (type !== undefined) {
             const manager = this.managersMap.get(type);
@@ -72,7 +94,13 @@ export default class AssetManager {
         })
     }
 
-    private checkAssetSupport(path: string) {
+    /**
+     * Checks if file can be stored in asset manager by its file extension.
+     * 
+     * @param path path to file
+     * @returns boolean result
+     */
+    private checkAssetSupport(path: string): boolean {
         let supported = false;
 
         const fileRegex = /([A-Za-z0-9 ()_\-,.*]*)([.][A-Za-z0-9]+)$/g;
