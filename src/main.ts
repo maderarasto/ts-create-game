@@ -1,6 +1,6 @@
 import './style.css'
 import config from './config';
-import Application from './framework/Application';
+import Application from './framework/Core/Application';
 
 const container = document.querySelector('#app') as HTMLDivElement;
 container.innerHTML = `

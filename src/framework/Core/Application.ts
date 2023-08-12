@@ -1,3 +1,6 @@
+import AssetManager from "../Assets/AssetManager";
+import defines from "../defines";
+
 export default class Application {
     private _config: Core.AppConfig;
 
@@ -13,9 +16,14 @@ export default class Application {
     private _loopUpdatedAt?: number;
     private _loopInterval?: number;
 
+    private assets: AssetManager;
+
     constructor(config: Core.AppConfig) {
         this._config = config;
         this._running = false;
+        
+        this.assets = new AssetManager();
+        this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks`, 'TANK_BLUE').catch(err => console.log(err));
     }
 
     get config() {
