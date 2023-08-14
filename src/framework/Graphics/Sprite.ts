@@ -20,7 +20,7 @@ export default class Sprite implements Renderable {
 
     constructor(spritesheet: HTMLImageElement, size: Vector2, options?: SpriteOptions) {
         this.spritesheet =  spritesheet
-        this.position = Vector2.Zero;
+        this.position = Vector2.zero();
         this.size = size;
         this.options = options ? options : { mode: 'single' };
     }

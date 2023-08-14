@@ -1,4 +1,5 @@
 import Vector2 from "../Core/Vector2";
+import Sprite from "../Graphics/Sprite";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
 
@@ -7,9 +8,11 @@ import Updatable from "../Interfaces/Updatable";
  */
 export default class Entity implements Updatable, Renderable {
     private _position: Vector2;
+    private sprite: Sprite;
 
-    constructor() {
-        this._position = Vector2.Zero;
+    constructor(sprite: Sprite) {
+        this.sprite = sprite;
+        this._position = Vector2.zero();
     }
 
     /**
@@ -20,6 +23,10 @@ export default class Entity implements Updatable, Renderable {
      */
     get position(): Vector2 {
         return this._position;
+    }
+
+    setSprite(sprite: Sprite) {
+        this.sprite = sprite;
     }
 
     /**
@@ -43,6 +50,10 @@ export default class Entity implements Updatable, Renderable {
             this._position.x = value;
             this._position.y = other;
         }
+
+        if (this.sprite) {
+            this.sprite.setPosition(this.position);
+        }
     }
 
     update(deltaTime: number): void {
@@ -50,6 +61,6 @@ export default class Entity implements Updatable, Renderable {
     }
 
     render(context: CanvasRenderingContext2D): void {
-        throw new Error("Method not implemented.");
+        this.sprite.render(context);
     }
 }
