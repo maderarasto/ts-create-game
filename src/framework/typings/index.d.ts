@@ -8,3 +8,11 @@ namespace Core {
         }
     }
 }
+
+namespace Entities {
+    type Category = (
+        | 'Entity'
+        | 'Enemy'     
+        | 'Player'  
+    );
+}
