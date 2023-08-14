@@ -31,7 +31,7 @@ export default class AssetManager {
 
             if (this.imageAssets.has(key)) {
                 reject(
-                    new Error('Asset with given key already exists!')
+                    new Error(`Asset with key ${key} already exists!`)
                 );
             }
             
@@ -42,7 +42,7 @@ export default class AssetManager {
                     console.log(request.responseURL);
                     if (!this.checkAssetSupport(request.responseURL)) {
                         reject(
-                            new Error('Asset Manager does not support this file extension!')
+                            new Error(`Asset Manager does not support file extension for file ${path}!`)
                         );
                     }
 
@@ -52,7 +52,7 @@ export default class AssetManager {
                     resolve();
                 } else if (request.status === 404) {
                     reject(
-                        new Error('File not found with given path!')
+                        new Error(`File not found with path ${path}!`)
                     );
                 }
             }
@@ -72,7 +72,7 @@ export default class AssetManager {
         const manager = this.managersMap.get(type);
 
         if (!manager?.has(key)) {
-            throw new Error('Image asset with given key not found!');
+            throw new Error(`Image asset with key ${key} not found!`);
         }
 
         return manager?.get(key);

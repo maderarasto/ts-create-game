@@ -1,5 +1,8 @@
 import AssetManager from "../Assets/AssetManager";
+import Mob from "../Entities/Mob";
+import Sprite from "../Graphics/Sprite";
 import defines from "../defines";
+import Vector2 from "./Vector2";
 
 export default class Application {
     private _config: Core.AppConfig;
@@ -17,13 +20,20 @@ export default class Application {
     private _loopInterval?: number;
 
     private assets: AssetManager;
+    private mob?: Mob;
 
     constructor(config: Core.AppConfig) {
         this._config = config;
         this._running = false;
         
         this.assets = new AssetManager();
-        this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').catch(err => console.log(err));
+        this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
+            const tankImage = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
+            const tankSprite = new Sprite(tankImage, new Vector2(32, 32));
+            
+            this.mob = new Mob(tankSprite);
+            this.mob.position = new Vector2(50, 50);
+        })
     }
 
     get config() {
@@ -65,6 +75,10 @@ export default class Application {
     }
 
     private update(deltaTime: number) {
+        if (this.mob) {
+            this.mob.velocity.x = 100;
+            this.mob.update(deltaTime);
+        }
     }
 
     private render() {
@@ -90,8 +104,7 @@ export default class Application {
             (this.config.default.height - 24) / 2,
         );
 
-        const blueTank = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
-        context.drawImage(blueTank, 10, 10, 32, 32);
+        this.mob?.render(context);
     }
 
     private getTimeSinceStart() {
