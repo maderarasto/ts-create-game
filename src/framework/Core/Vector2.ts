@@ -1,7 +1,4 @@
 export default class Vector2 {
-    static readonly One = new Vector2(1, 1);
-    static readonly Zero = new Vector2(0, 0);
-
     constructor(
         public x: number = 0, 
         public y: number = 0
@@ -15,6 +12,24 @@ export default class Vector2 {
      */
     equals(other: Vector2): boolean {
         return this.x === other.x && this.y === other.y;
+    }
+
+    /**
+     * Create a vector with both components as 0 value.
+     * 
+     * @returns zero vector.
+     */
+    static zero() {
+        return new Vector2(0, 0);
+    }
+
+    /**
+     * Create a vector with both components as 1 value.
+     * 
+     * @returns one vector.
+     */
+    static one() {
+        return new Vector2(1, 1);
     }
     
     /**
