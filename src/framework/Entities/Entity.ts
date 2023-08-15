@@ -4,6 +4,12 @@ import Commandable from "../Interfaces/Commandable";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
 
+export enum Category {
+    Entity  = 0,
+    Player  = 1 << 0,
+    Enemies = 1 << 1
+}
+
 /**
  * Represents en entity in world defined by image, size and position.
  */
@@ -23,8 +29,8 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
      * @type {Entities.Category}
      * @memberof Entity
      */
-    get category(): Entities.Category {
-        return 'Entity';
+    get category(): Category {
+        return Category.Entity;
     }
 
     /**

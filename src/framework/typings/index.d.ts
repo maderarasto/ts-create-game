@@ -10,15 +10,16 @@ namespace Core {
 }
 
 namespace Entities {
-    type Category = (
-        | 'Entity'
-        | 'Enemy'     
-        | 'Player'  
-    );
+    type Movement = (
+        | 'MOVE_UP'
+        | 'MOVE_DOWN'
+        | 'MOVE_LEFT'
+        | 'MOVE_RIGHT'
+    )
 
-    export type Command = {
+     type Command = {
         name: string
         category: Category
-        action: (command: import('../Interfaces/Commandable').default) => void
+        action: (entity: import('../Interfaces/Commandable').default) => void
     }
 }
