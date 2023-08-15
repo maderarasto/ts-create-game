@@ -15,4 +15,10 @@ namespace Entities {
         | 'Enemy'     
         | 'Player'  
     );
+
+    export type Command = {
+        name: string
+        category: Category
+        action: (command: import('../Interfaces/Commandable').default) => void
+    }
 }
