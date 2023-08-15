@@ -38,7 +38,7 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
     }
 
     set position(value: Vector2) {
-        this.position = value;
+        this._position = value;
 
         if (this.sprite) {
             this.sprite.setPosition(this.position);
