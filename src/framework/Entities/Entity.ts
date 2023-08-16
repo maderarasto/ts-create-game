@@ -50,9 +50,9 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
     set position(value: Vector2) {
         this._position = value;
 
-        if (this.sprite) {
-            this.sprite.position.x = this.position.x;
-            this.sprite.position.y = this.position.y;
+        if (this._sprite) {
+            this._sprite.position.x = this.position.x;
+            this._sprite.position.y = this.position.y;
         }
     }
 
@@ -63,8 +63,15 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
         this._sprite = sprite;
     }
 
-    onCommand(): void {
-        // TODO: handle command
+    /**
+     * Execute command if entity category is matched.
+     * 
+     * @param command command to be executed.
+     */
+    onCommand(command: Entities.Command): void {
+        if (command.category & this.category) {
+            command.action(this);
+        }
     }
 
     abstract update(deltaTime: number): void;
@@ -75,6 +82,6 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
      * @param context 2d rendering context.
      */
     render(context: CanvasRenderingContext2D): void {
-        this.sprite.render(context);
+        this._sprite.render(context);
     }
 }

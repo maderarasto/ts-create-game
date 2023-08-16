@@ -1,6 +1,7 @@
 import Mob from "./Entities/Mob";
 import { Category } from "./Entities/Entity";
 import Vector2 from "./Core/Vector2";
+import Queue from "./Core/Queue";
 
 type PlayerAction = (
     | 'MOVE_UP'
@@ -32,9 +33,9 @@ export default class PlayerController {
         this.setupActions();
     }
 
-    handleKeyEvent(event: KeyboardEvent) {
+    handleKeyEvent(event: KeyboardEvent, commands: Queue<Entities.Command>) {
         const foundAction = this.keyBindings.get(event.key);
-
+        
         if (!foundAction) {
             return;
         }
@@ -44,8 +45,8 @@ export default class PlayerController {
         if (!foundCommand) {
             return;
         }
-
-        // TODO: enque command of triggered event
+        
+        commands.enqueue(foundCommand);
     }
 
     private setupKeys() {
@@ -67,7 +68,10 @@ export default class PlayerController {
             name: name,
             category: Category.Player,
             action: (entity) => {
-                (entity as Mob).velocity = PlayerController.MOVEMENT_VECTORS.get(move) as Vector2;
+                const mobEntity = entity as Mob;
+                const moveVector = PlayerController.MOVEMENT_VECTORS.get(move) as Vector2;
+
+                mobEntity.velocity = Vector2.add(mobEntity.velocity, moveVector);
             }
         })
     }

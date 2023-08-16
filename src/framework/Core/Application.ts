@@ -4,6 +4,7 @@ import Sprite from "../Graphics/Sprite";
 import defines from "../defines";
 import PlayerController from "../PlayerController";
 import Vector2 from "./Vector2";
+import Queue from "./Queue";
 
 export default class Application {
     private _config: Core.AppConfig;
@@ -22,6 +23,7 @@ export default class Application {
 
     private canvas: HTMLCanvasElement;
     private assets: AssetManager;
+    private commands: Queue<Entities.Command>;
     private playerControler: PlayerController;
     private mob?: Mob;
 
@@ -36,6 +38,7 @@ export default class Application {
         }
 
         this.assets = new AssetManager();
+        this.commands = new Queue();
         this.playerControler = new PlayerController();
 
         this.canvas.focus();
@@ -84,11 +87,16 @@ export default class Application {
 
     private handleEvents() {
         window.addEventListener('keydown', (ev) => {
-            this.playerControler.handleKeyEvent(ev);
+            this.playerControler.handleKeyEvent(ev, this.commands);
         });
     }
 
     private update(deltaTime: number) {
+        while (!this.commands.isEmpty()) {
+            const command = this.commands.dequeue();
+            this.mob?.onCommand(command);
+        }
+
         this.mob?.update(deltaTime);
     }
 
