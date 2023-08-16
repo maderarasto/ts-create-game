@@ -8,20 +8,17 @@ import Queue from "./Queue";
 
 export default class Application {
     private _config: Core.AppConfig;
+    private canvas: HTMLCanvasElement
 
-    // Application signals
+    // Application indicators
     private _running: boolean;
     
-    // Framerate
-    private _frames: number = 0;
-    private _framerateUpdatedAt?: number;
-
-    // Game loop timing
-    private _loopStartedAt?: number;
-    private _loopUpdatedAt?: number;
-    private _loopInterval?: number;
-
-    private canvas: HTMLCanvasElement;
+    // Timing a frames
+    private _lastUpdateTime: number;
+    private _lastFpsCountTime: number;
+    private _frames: number;
+    
+    // Managers
     private assets: AssetManager;
     private commands: Queue<Entities.Command>;
     private playerControler: PlayerController;
@@ -30,6 +27,9 @@ export default class Application {
     constructor(config: Core.AppConfig) {
         this._config = config;
         this._running = false;
+        this._lastUpdateTime = 0;
+        this._lastFpsCountTime = 0;
+        this._frames = 0;
         
         this.canvas = document.querySelector('#app canvas') as HTMLCanvasElement;
 
@@ -41,7 +41,6 @@ export default class Application {
         this.commands = new Queue();
         this.playerControler = new PlayerController();
 
-        this.canvas.focus();
         this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
             const tankImage = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
             const tankSprite = new Sprite(tankImage, new Vector2(32, 32));
@@ -56,33 +55,30 @@ export default class Application {
     }
 
     run() {
-        const timePerUpdate =  1000 / 60;
-
         this._running = true;
-        this._loopStartedAt = Date.now();
-        this._framerateUpdatedAt = Date.now();
 
-        this._loopInterval = setInterval(() => {
-            const elapsedTime = this.getTimeSinceLastUpdate();
+        requestAnimationFrame(this.processLoop.bind(this));
+    }
 
-            // Stop game loop interval if application is stopped.
-            if (!this._running) {
-                clearInterval(this._loopInterval);
-                this._loopInterval = undefined;
-            }
+    private processLoop(time: number) {
+        const elapsedTime = time - this._lastUpdateTime;
+        const elapsedSeconds = elapsedTime / 1000;
+        
+        this._lastUpdateTime = time;
+        this._lastFpsCountTime += elapsedTime;
 
-            this._loopUpdatedAt = Date.now();
-            this.handleEvents();
-            this.update(elapsedTime / 1000);
-            this.render();
-            this._frames++;
+        if (this._lastFpsCountTime > 1000) {
+            this._lastFpsCountTime = 0;
+            this._frames = Math.round(1 / elapsedSeconds);
+        }
 
-            if (this.getTimeSinceLastFramerateUpdate() >= 1000) {
-                console.log('FPS:', this._frames);
-                this._frames = 0;
-                this._framerateUpdatedAt = Date.now();
-            }
-        }, timePerUpdate)
+        this.handleEvents();
+        this.update(elapsedSeconds)
+        this.render();
+
+        if (this._running) {
+            requestAnimationFrame(this.processLoop.bind(this));
+        }
     }
 
     private handleEvents() {
@@ -118,25 +114,5 @@ export default class Application {
         );
 
         this.mob?.render(context);
-    }
-
-    private getTimeSinceStart() {
-        return this._loopStartedAt !== undefined ? Date.now() - this._loopStartedAt : 0;
-    }
-
-    private getTimeSinceLastUpdate() {
-        const diffFrom = this._loopUpdatedAt !== undefined 
-            ? this._loopUpdatedAt 
-            : this._loopStartedAt;
-        
-        return diffFrom !== undefined ? Date.now() - diffFrom : 0;
-    }
-
-    private getTimeSinceLastFramerateUpdate() {
-        const diffFrom = this._framerateUpdatedAt !== undefined 
-            ? this._framerateUpdatedAt 
-            : this._loopStartedAt;
-        
-        return diffFrom !== undefined ? Date.now() - diffFrom : 0;
     }
 }
