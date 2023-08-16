@@ -15,9 +15,9 @@ This project was created for purpose to easily create game playable in browser f
 #### Done
 ✅ Main game loop (handling events, updating game logic, rendering visuals)<br />
 ✅ Asset manager (loading assets from local files and accessing them on request)<br />
+✅ Entities for representation of static and movable objects<br />
 
 #### In development
-⌛ Entities for representation of static and movable objects<br />
 ⌛ Commands a command queue for simple execution of entity actions<br />
 ⌛ Input controller for simple registration input keys for player<br />
 ⌛ Application states and state stack<br />
