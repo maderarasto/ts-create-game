@@ -13,70 +13,58 @@ type SpriteOptions = {
  * Represents object with image at specific position.
  */
 export default class Sprite implements Renderable {
-    private spritesheet: HTMLImageElement;
-    private position: Vector2;
-    private size: Vector2;
+    private _spritesheet: HTMLImageElement;
+    private _position: Vector2;
+    private _size: Vector2;
     private options: SpriteOptions;
 
     constructor(spritesheet: HTMLImageElement, size: Vector2, options?: SpriteOptions) {
-        this.spritesheet =  spritesheet
-        this.position = Vector2.zero();
-        this.size = size;
+        this._spritesheet =  spritesheet
+        this._position = Vector2.zero();
+        this._size = size;
         this.options = options ? options : { mode: 'single' };
     }
 
     /**
+     * Get a spritesheet.
+     */
+    get spriteshet(): HTMLImageElement {
+        return this._spritesheet;
+    }
+
+    /**
      * Set a spritesheet.
-     * @param spritesheet spritesheet image 
      */
-    setSpritesheet(spritesheet: HTMLImageElement) {
-        this.spritesheet = spritesheet;
+    set spritesheet(spritesheet: HTMLImageElement) {
+        this._spritesheet = spritesheet;
     }
 
     /**
-     * Set sprite position as Vector value.
-     * 
-     * @param x position vector
+     * Get position of the sprite as vector.
      */
-    setPosition(x: Vector2): void;
-
-    /**
-     * Set sprite position as combination of X and Y coordinates.
-     * 
-     * @param x position x
-     * @param y position y
-     */
-    setPosition(x: number, y: number): void;
-    setPosition(x: Vector2|number, y?: number): void {
-        if (x instanceof Vector2) {
-            this.position = x;
-        } else if (typeof x === 'number' && typeof y === 'number') {
-            this.position.x = x;
-            this.position.y = y;
-        }
+    get position(): Vector2 {
+        return this._position;
     }
 
     /**
-     * Set sprite size as Vector value.
-     * 
-     * @param x size vector
+     * Set new position of the sprite.
      */
-    setSize(x: Vector2): void;
+    set position(position: Vector2) {
+        this._position = position;
+    }
 
     /**
-     * Set sprite size as combination of width and height.
-     * 
-     * @param x sprite width
-     * @param y sprite height
+     * Get size of the sprite as vector.
      */
-    setSize(x: number, y: number): void;
-    setSize(x: Vector2|number, y?: number): void {
-        if (x instanceof Vector2) {
-            this.size = x;
-        } else if (typeof x === 'number' && typeof y === 'number') {
-            this.size.x = x;
-            this.size.y = y;
-        }
+    get size(): Vector2 {
+        return this._size;
+    }
+
+    /**
+     * Set new size of the sprite.
+     */
+    set size(size: Vector2) {
+        this._size = size;
     }
 
     /**

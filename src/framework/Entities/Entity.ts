@@ -9,15 +9,15 @@ import Updatable from "../Interfaces/Updatable";
  */
 export default abstract class Entity implements Commandable, Updatable, Renderable {
     private _position: Vector2;
-    private sprite: Sprite;
+    private _sprite: Sprite;
 
     constructor(sprite: Sprite) {
-        this.sprite = sprite;
+        this._sprite = sprite;
         this._position = Vector2.zero();
     }
 
     /**
-     * Get entity category.
+     * Get category of the entity.
      *
      * @readonly
      * @type {Entities.Category}
@@ -28,7 +28,7 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
     }
 
     /**
-     * Get entity position.
+     * Get position of the entity.
      *
      * @type {Vector2}
      * @memberof Entity
@@ -37,21 +37,24 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
         return this._position;
     }
 
+    /**
+     * Set a new position of the entity.
+     * Also updates position of sprite.
+     */
     set position(value: Vector2) {
         this.position = value;
 
         if (this.sprite) {
-            this.sprite.setPosition(this.position);
+            this.sprite.position.x = this.position.x;
+            this.sprite.position.y = this.position.y;
         }
     }
 
     /**
-     * Set entity sprite.
-     * 
-     * @param sprite new sprite
+     * Set a new sprite of the entity.
      */
-    setSprite(sprite: Sprite) {
-        this.sprite = sprite;
+    set sprite(sprite: Sprite) {
+        this._sprite = sprite;
     }
 
     onCommand(): void {
@@ -61,7 +64,7 @@ export default abstract class Entity implements Commandable, Updatable, Renderab
     abstract update(deltaTime: number): void;
 
     /**
-     * Render a sprite of entity.
+     * Render a sprite of the entity.
      * 
      * @param context 2d rendering context.
      */
