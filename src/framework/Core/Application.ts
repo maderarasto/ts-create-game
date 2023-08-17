@@ -85,9 +85,10 @@ export default class Application {
     }
 
     private handleEvents() {
-        window.addEventListener('keydown', (ev) => {
-            this.playerControler.handleKeyEvent(ev, this.commands);
-        });
+        while (!this.eventHandler.isEmpty()) {
+            const event = this.eventHandler.pollEvent();
+            console.log(event);
+        }
     }
 
     private update(deltaTime: number) {

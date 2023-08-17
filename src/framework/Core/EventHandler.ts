@@ -4,28 +4,43 @@ import Queue from "./Queue";
  * Provides functionality to handling events and pushing them into event queue.
  */
 export default class EventsHandler {
+    /**
+     * List of keyboard event types. 
+     */
     private static readonly KEYBOARD_EVENT_TYPES = [
         'KeyDown', 
         'KeyUp'
     ] as const;
     
+    /**
+     * List of mouse event types for movement and entering/leaving area.
+     */
     private static readonly MOUSE_MOVE_EVENT_TYPES = [
         'MouseMove', 
         'MouseEnter', 
         'MouseLeave', 
     ] as const;
 
+    /**
+     * List of mouse event types for clicking.
+     */
     private static readonly MOUSE_BUTTON_EVENT_TYPES = [
         'MouseDown',
         'MouseUp'
     ] as const;
 
-    private static readonly MAP_JS_MOUSE_BUTTONS: Record<number, Core.MouseButton> = {
+    /**
+     * Bindings for DOM mouse buttons.
+     */
+    private static readonly MAP_DOM_MOUSE_BUTTONS: Record<number, Core.MouseButton> = {
         0: 'Left',
         1: 'Middle',
         2: 'Right'
     };
 
+    /**
+     * Bindings for DOM event types
+     */
     private static readonly MAP_JS_EVENT_TYPES: Record<string, Core.EventType> = {
         keydown: 'KeyDown',
         keyup: 'KeyUp',
@@ -75,7 +90,7 @@ export default class EventsHandler {
     }
 
     /**
-     * Handle a keyboard event and push it to event queue.
+     * Handle keyboard events and push the into event queue.
      * 
      * @param ev keyboard event.
      */
@@ -97,7 +112,12 @@ export default class EventsHandler {
         });
     }
 
-    private handleMouseMoveEvent(ev: MouseEvent) {
+    /**
+     * Handle mouse events related to mouse movement and push them into event queue.
+     * 
+     * @param ev mouse event
+     */
+    private handleMouseMoveEvent(ev: MouseEvent): void {
         type MouseEventType = typeof EventsHandler.MOUSE_MOVE_EVENT_TYPES[number];
         const type = EventsHandler.MAP_JS_EVENT_TYPES[ev.type] as MouseEventType;
         
@@ -120,7 +140,12 @@ export default class EventsHandler {
         });
     }
 
-    private handleMouseButtonEvent(ev: MouseEvent) {
+    /**
+     * Handle mouse events related to mouse buttons and push tem into event queue.
+     * 
+     * @param ev mouse event
+     */
+    private handleMouseButtonEvent(ev: MouseEvent): void {
         type MouseEventType = typeof EventsHandler.MOUSE_BUTTON_EVENT_TYPES[number];
         const type = EventsHandler.MAP_JS_EVENT_TYPES[ev.type] as MouseEventType;
         
@@ -140,11 +165,16 @@ export default class EventsHandler {
             alt: ev.altKey,
             ctrl: ev.ctrlKey,
             shift: ev.shiftKey,
-            button: EventsHandler.MAP_JS_MOUSE_BUTTONS[ev.button]
+            button: EventsHandler.MAP_DOM_MOUSE_BUTTONS[ev.button]
         });
     }
 
-    private handleMouseWheelEvent(ev: WheelEvent) {
+    /**
+     * Handle mouse events related to scrolling and push them into event queue.
+     * 
+     * @param ev wheel event
+     */
+    private handleMouseWheelEvent(ev: WheelEvent): void {
         if (!(ev.target instanceof HTMLCanvasElement)) {
             return;
         }
