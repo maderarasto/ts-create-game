@@ -50,7 +50,7 @@ export default class Application {
             
             this.mob = new Mob(tankSprite);
             this.mob.position = new Vector2(50, 50);
-        })
+        });
     }
 
     get config() {
@@ -87,7 +87,6 @@ export default class Application {
     private handleEvents() {
         while (!this.eventHandler.isEmpty()) {
             const event = this.eventHandler.pollEvent();
-            console.log(event);
         }
     }
 
