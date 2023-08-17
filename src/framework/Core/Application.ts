@@ -5,6 +5,7 @@ import defines from "../defines";
 import PlayerController from "../PlayerController";
 import Vector2 from "./Vector2";
 import Queue from "./Queue";
+import EventsHandler from "./EventHandler";
 
 export default class Application {
     private _config: Core.AppConfig;
@@ -21,6 +22,7 @@ export default class Application {
     // Managers
     private assets: AssetManager;
     private commands: Queue<Entities.Command>;
+    private eventHandler: EventsHandler;
     private playerControler: PlayerController;
     private mob?: Mob;
 
@@ -39,6 +41,7 @@ export default class Application {
 
         this.assets = new AssetManager();
         this.commands = new Queue();
+        this.eventHandler = new EventsHandler(this.canvas);
         this.playerControler = new PlayerController();
 
         this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
