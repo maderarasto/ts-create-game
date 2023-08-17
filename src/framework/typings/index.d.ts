@@ -45,35 +45,23 @@ namespace Core {
     type Event = {
         type: EventType
     } | {
+        type: 'KeyDown' | 'KeyUp' | 'MouseDown' | 'MouseUp' | 'MouseMove'|'MouseEnter'|'MouseLeave' | 'MouseWheel',
+        alt: boolean
+        ctrl: boolean
+        shift: boolean
+    } | {
         type: 'KeyDown'|'KeyUp',
         code: string
         key: string
-        alt: boolean
-        ctrl: boolean
-        shift: boolean
     } | {
-        type: 'MouseMove'|'MouseEnter'|'MouseLeave',
+        type: 'MouseDown' | 'MouseUp' | 'MouseMove'|'MouseEnter'|'MouseLeave' | 'MouseWheel',
         x: number
         y: number
-        alt: boolean
-        ctrl: boolean
-        shift: boolean
-        button: MouseButton
     } | {
         type: 'MouseDown'|'MouseUp',
-        x: number
-        y: number
-        alt: boolean
-        ctrl: boolean
-        shift: boolean
         button: MouseButton
     } | {
         type: 'MouseWheel',
-        x: number
-        y: number
-        alt: boolean
-        ctrl: boolean
-        shift: boolean
         delta: number
     }
 }
