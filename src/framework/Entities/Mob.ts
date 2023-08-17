@@ -1,6 +1,6 @@
 import Vector2 from "../Core/Vector2";
 import Sprite from "../Graphics/Sprite";
-import Entity from "./Entity";
+import Entity, { Category } from "./Entity";
 
 /**
  * Represents an entity that can move with certain velocity.
@@ -12,6 +12,10 @@ export default class Mob extends Entity {
         super(sprite);
 
         this._velocity = Vector2.zero();
+    }
+
+    get category(): Category {
+        return Category.Player;
     }
 
     /**
@@ -39,8 +43,12 @@ export default class Mob extends Entity {
      * @param deltaTime delta time between two frames.
      */
     update(deltaTime: number) {
-        this.position.x += this.velocity.x;
-        this.position.y += this.velocity.y;
+        const posX = this.position.x + this.velocity.x * deltaTime;
+        const posY = this.position.y + this.velocity.y * deltaTime;
+
+        this.position = new Vector2(posX, posY);
+        // this.position.x += this.velocity.x;
+        // this.position.y += this.velocity.y;
 
         // Reset velocity
         this.velocity = Vector2.zero();

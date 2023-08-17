@@ -67,12 +67,16 @@ namespace Core {
 }
 
 namespace Entities {
-    /**
-     * Represents a category if entities.
-     */
-    type Category = (
-        | 'Entity'
-        | 'Enemy'     
-        | 'Player'  
-    );
+    type Movement = (
+        | 'MOVE_UP'
+        | 'MOVE_DOWN'
+        | 'MOVE_LEFT'
+        | 'MOVE_RIGHT'
+    )
+
+     type Command = {
+        name: string
+        category: Category
+        action: (entity: import('../Interfaces/Commandable').default) => void
+    }
 }
