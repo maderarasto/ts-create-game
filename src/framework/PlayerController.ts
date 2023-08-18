@@ -2,15 +2,24 @@ import Mob from "./Entities/Mob";
 import { Category } from "./Entities/Entity";
 import Vector2 from "./Core/Vector2";
 import Queue from "./Core/Queue";
+import { Keyboard, KeyboardKey } from "./Core/Input";
 
-type PlayerAction = (
-    | 'MOVE_UP'
-    | 'MOVE_DOWN'
-    | 'MOVE_LEFT'
-    | 'MOVE_RIGHT'
-    | 'JUMP'
-    | 'FIRE'
-);
+enum PlayerActionBinding {
+    MOVE_UP = 'Move Up',
+    MOVE_DOWN = 'Move Down',
+    MOVE_LEFT = 'Move Left',
+    MOVE_RIGHT = 'Move Right',
+    JUMP = 'Jump',
+    FIRE = 'Fire',
+}
+
+type PlayerAction = keyof typeof PlayerActionBinding;
+
+ type KeyBinding = {
+    key: KeyboardKey,
+    command: Entities.Command
+    realtime: boolean
+ };
 
 export default class PlayerController {
     private static readonly MOVEMENT_VECTORS: 
@@ -22,50 +31,44 @@ export default class PlayerController {
         ]
     );
 
-    private keyBindings: Map<string, PlayerAction>;
-    private actionBindings: Map<PlayerAction, Entities.Command>;
+    private keyBindings: Map<Keyboard.Code, KeyBinding>;
 
     constructor() {
         this.keyBindings = new Map();
-        this.actionBindings = new Map();
-
-        this.setupKeys();
-        this.setupActions();
+        this.setupKeyBindings();
     }
 
     handleKeyEvent(event: KeyboardEvent, commands: Queue<Entities.Command>) {
-        const foundAction = this.keyBindings.get(event.key);
+        // const keyBinding = this.keyBindings.get(event.key);
         
-        if (!foundAction) {
-            return;
+        // if (!keyBinding) {
+        //     return;
+        // }
+        
+        // commands.enqueue(keyBinding.command);
+    }
+
+    private setupKeyBindings() {
+        // this.keyBindings.set('KeyW', this.createMoveCommand('MOVE_UP'),);
+        // this.keyBindings.set('KeyS', 'MOVE_DOWN');
+        // this.keyBindings.set('KeyA', 'MOVE_LEFT');
+        // this.keyBindings.set('KeyD', 'MOVE_RIGHT');
+    }
+
+    // private setupActions() {
+    //     this.createMoveCommand('Move Up', 'MOVE_UP');
+    //     this.createMoveCommand('Move Down', 'MOVE_DOWN');
+    //     this.createMoveCommand('Move Left', 'MOVE_LEFT');
+    //     this.createMoveCommand('Move Right', 'MOVE_RIGHT');
+    // }
+
+    private createMoveBinding(move: Entities.Movement) {
+        {
+
         }
 
-        const foundCommand = this.actionBindings.get(foundAction);
-
-        if (!foundCommand) {
-            return;
-        }
-        
-        commands.enqueue(foundCommand);
-    }
-
-    private setupKeys() {
-        this.keyBindings.set('w', 'MOVE_UP');
-        this.keyBindings.set('s', 'MOVE_DOWN');
-        this.keyBindings.set('a', 'MOVE_LEFT');
-        this.keyBindings.set('d', 'MOVE_RIGHT');
-    }
-
-    private setupActions() {
-        this.createMoveCommand('Move Up', 'MOVE_UP');
-        this.createMoveCommand('Move Down', 'MOVE_DOWN');
-        this.createMoveCommand('Move Left', 'MOVE_LEFT');
-        this.createMoveCommand('Move Right', 'MOVE_RIGHT');
-    }
-
-    private createMoveCommand(name: string, move: Entities.Movement) {
-        this.actionBindings.set(move, {
-            name: name,
+        return {
+            name: PlayerActionBinding[move],
             category: Category.Player,
             action: (entity) => {
                 const mobEntity = entity as Mob;
@@ -73,6 +76,6 @@ export default class PlayerController {
 
                 mobEntity.velocity = Vector2.add(mobEntity.velocity, moveVector);
             }
-        })
+        } as Entities.Command;
     }
 }

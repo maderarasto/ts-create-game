@@ -1,7 +1,7 @@
 /**
  * Represents key on keyboard
  */
-enum Key  {
+export enum KeyboardKey  {
     // Numbers
     Digit1 = '1',
     Digit2 = '2',
@@ -71,11 +71,11 @@ enum Key  {
     ArrowRight = 'ArrowRight'
 }
 
-declare namespace Keyboard {
+export declare namespace Keyboard {
     /**
      * Represents code of keyboard key
      */
-    type Code = keyof typeof Key
+    type Code = keyof typeof KeyboardKey
 
     /**
      * Represents status of keyboard key
@@ -86,8 +86,8 @@ declare namespace Keyboard {
 /**
  * Represents of keyboard key with its status.
  */
-type KeyboardKey = {
-    key: Key
+type KeyboardKeyStatus = {
+    key: KeyboardKey
     code: Keyboard.Code
     status: Keyboard.Status
 }
@@ -101,14 +101,14 @@ export default class Input {
     /**
      * Map of keyboard events.
      */
-    private keys: Map<Keyboard.Code, KeyboardKey>;
+    private keys: Map<Keyboard.Code, KeyboardKeyStatus>;
 
     private constructor() {
         this.keys = new Map();
         
-        (Object.keys(Key) as Keyboard.Code[]).forEach(code => {
+        (Object.keys(KeyboardKey) as Keyboard.Code[]).forEach(code => {
             this.keys.set(code, {
-                key: Key[code],
+                key: KeyboardKey[code],
                 code: code,
                 status: 'KeyUp'
             });
@@ -138,6 +138,17 @@ export default class Input {
      */
     static isKeyPressed(code: Keyboard.Code) {
         return Input.get().keys.get(code)?.status === 'KeyDown' ?? false;
+    }
+
+    static localize(code: Keyboard.Code) {
+        return KeyboardKey[code];
+    }
+
+    static delocalize(key: KeyboardKey) {
+        const keyboardCodes = Object.keys(KeyboardKey);
+        const keyboardKeys = Object.values(KeyboardKey);
+
+        return keyboardCodes[keyboardKeys.indexOf(key)];
     }
 
     /**
