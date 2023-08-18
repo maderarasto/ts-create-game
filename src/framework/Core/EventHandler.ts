@@ -101,7 +101,7 @@ export default class EventsHandler {
         if (!EventsHandler.KEYBOARD_EVENT_TYPES.includes(type)) {
             return;
         }
-
+        
         this.queue.enqueue({
             type: type,
             code: ev.code,

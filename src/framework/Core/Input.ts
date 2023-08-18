@@ -140,10 +140,22 @@ export default class Input {
         return Input.get().keys.get(code)?.status === 'KeyDown' ?? false;
     }
 
+    /**
+     * Translate a keyboard code to keyboard key.
+     * 
+     * @param code keyboard code
+     * @returns keyboard key
+     */
     static localize(code: Keyboard.Code) {
         return KeyboardKey[code];
     }
 
+    /**
+     * Translate a keyboard key to keyboard code.
+     * 
+     * @param key keyboard key
+     * @returns keyboard code
+     */
     static delocalize(key: KeyboardKey) {
         const keyboardCodes = Object.keys(KeyboardKey);
         const keyboardKeys = Object.values(KeyboardKey);

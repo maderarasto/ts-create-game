@@ -64,6 +64,10 @@ namespace Core {
         type: 'MouseWheel',
         delta: number
     }
+
+    type KeyboardEvent = Event & {
+        type: 'KeyDown'|'KeyUp'
+    }
 }
 
 namespace Entities {

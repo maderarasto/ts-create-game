@@ -2,7 +2,7 @@ import Mob from "./Entities/Mob";
 import { Category } from "./Entities/Entity";
 import Vector2 from "./Core/Vector2";
 import Queue from "./Core/Queue";
-import { Keyboard, KeyboardKey } from "./Core/Input";
+import Input, { Keyboard, KeyboardKey } from "./Core/Input";
 
 enum PlayerActionBinding {
     MOVE_UP = 'Move Up',
@@ -13,13 +13,11 @@ enum PlayerActionBinding {
     FIRE = 'Fire',
 }
 
-type PlayerAction = keyof typeof PlayerActionBinding;
-
- type KeyBinding = {
+type KeyBinding = {
     key: KeyboardKey,
     command: Entities.Command
     realtime: boolean
- };
+};
 
 export default class PlayerController {
     private static readonly MOVEMENT_VECTORS: 
@@ -38,44 +36,54 @@ export default class PlayerController {
         this.setupKeyBindings();
     }
 
-    handleKeyEvent(event: KeyboardEvent, commands: Queue<Entities.Command>) {
-        // const keyBinding = this.keyBindings.get(event.key);
+    handleKeyboardEvent(event: Core.Event, commands: Queue<Entities.Command>) {
+        let keyBinding: KeyBinding | undefined;
+
+        if ('code' in event) {
+            keyBinding = this.keyBindings.get(event.key as Keyboard.Code);
+        } 
+
+        if (!keyBinding || (keyBinding?.realtime ?? true)) {
+            return;
+        }
         
-        // if (!keyBinding) {
-        //     return;
-        // }
-        
-        // commands.enqueue(keyBinding.command);
+        commands.enqueue(keyBinding.command);
+    }
+
+    handleRealtimeInput(commands: Queue<Entities.Command>) {
+        this.keyBindings.forEach((keyBinding, keyCode) => {
+            if (!keyBinding.realtime) {
+                return;
+            }
+
+            if (Input.isKeyPressed(keyCode)) {
+                commands.enqueue(keyBinding.command);
+            }
+        })
     }
 
     private setupKeyBindings() {
-        // this.keyBindings.set('KeyW', this.createMoveCommand('MOVE_UP'),);
-        // this.keyBindings.set('KeyS', 'MOVE_DOWN');
-        // this.keyBindings.set('KeyA', 'MOVE_LEFT');
-        // this.keyBindings.set('KeyD', 'MOVE_RIGHT');
+        this.keyBindings.set('KeyW', this.createMoveBinding(KeyboardKey.KeyW, 'MOVE_UP'));
+        this.keyBindings.set('KeyS', this.createMoveBinding(KeyboardKey.KeyS, 'MOVE_DOWN'));
+        this.keyBindings.set('KeyA', this.createMoveBinding(KeyboardKey.KeyA, 'MOVE_LEFT'));
+        this.keyBindings.set('KeyD', this.createMoveBinding(KeyboardKey.KeyD, 'MOVE_RIGHT'));
     }
 
-    // private setupActions() {
-    //     this.createMoveCommand('Move Up', 'MOVE_UP');
-    //     this.createMoveCommand('Move Down', 'MOVE_DOWN');
-    //     this.createMoveCommand('Move Left', 'MOVE_LEFT');
-    //     this.createMoveCommand('Move Right', 'MOVE_RIGHT');
-    // }
-
-    private createMoveBinding(move: Entities.Movement) {
-        {
-
-        }
-
+    private createMoveBinding(key: KeyboardKey, move: Entities.Movement): KeyBinding {
         return {
-            name: PlayerActionBinding[move],
-            category: Category.Player,
-            action: (entity) => {
-                const mobEntity = entity as Mob;
-                const moveVector = PlayerController.MOVEMENT_VECTORS.get(move) as Vector2;
-
-                mobEntity.velocity = Vector2.add(mobEntity.velocity, moveVector);
-            }
-        } as Entities.Command;
+            key: key,
+            command : {
+                name: PlayerActionBinding[move],
+                category: Category.Player,
+                action: (entity) => {
+                    const mobEntity = entity as Mob;
+                    let moveVector = PlayerController.MOVEMENT_VECTORS.get(move) as Vector2;
+                    moveVector = Vector2.multiply(moveVector, 100);
+    
+                    mobEntity.velocity = Vector2.add(mobEntity.velocity, moveVector);
+                }
+            },
+            realtime: true
+        } as KeyBinding;
     }
 }

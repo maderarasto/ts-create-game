@@ -87,7 +87,10 @@ export default class Application {
     private handleEvents() {
         while (!this.eventHandler.isEmpty()) {
             const event = this.eventHandler.pollEvent();
+            this.playerControler.handleKeyboardEvent(event, this.commands);
         }
+
+        this.playerControler.handleRealtimeInput(this.commands);
     }
 
     private update(deltaTime: number) {
