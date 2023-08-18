@@ -4,6 +4,9 @@ import Vector2 from "./Core/Vector2";
 import Queue from "./Core/Queue";
 import Input, { Keyboard, KeyboardKey } from "./Core/Input";
 
+/**
+ * Represents binding between player action identifier and its name.
+ */
 enum PlayerActionBinding {
     MOVE_UP = 'Move Up',
     MOVE_DOWN = 'Move Down',
@@ -13,13 +16,22 @@ enum PlayerActionBinding {
     FIRE = 'Fire',
 }
 
+/**
+ * Represents input key and its corresponding command.
+ */
 type KeyBinding = {
     key: KeyboardKey,
     command: Entities.Command
     realtime: boolean
 };
 
+/**
+ * Provides funcitonality to specify input keys and its corresponding command to control playable characters.
+ */
 export default class PlayerController {
+    /**
+     * Mapping of player move actions to corresponding vectors.
+     */
     private static readonly MOVEMENT_VECTORS: 
         Map<Entities.Movement, Vector2> = new Map([
             ['MOVE_UP', new Vector2(0, -1)],
@@ -29,6 +41,9 @@ export default class PlayerController {
         ]
     );
 
+    /**
+     * Map of keys binded with commands.
+     */
     private keyBindings: Map<Keyboard.Code, KeyBinding>;
 
     constructor() {
@@ -36,6 +51,13 @@ export default class PlayerController {
         this.setupKeyBindings();
     }
 
+    /**
+     * Handle a keyboard event. If key is register in controller and its not realtime input
+     * then it will push its corresponding command to command queue.
+     * 
+     * @param event event from event queue
+     * @param commands command queue
+     */
     handleKeyboardEvent(event: Core.Event, commands: Queue<Entities.Command>) {
         let keyBinding: KeyBinding | undefined;
 
@@ -50,6 +72,12 @@ export default class PlayerController {
         commands.enqueue(keyBinding.command);
     }
 
+    /**
+     * Handle realtime input. If input key is pressed then it will push corresponding
+     * command to command queue.
+     * 
+     * @param commands command queue
+     */
     handleRealtimeInput(commands: Queue<Entities.Command>) {
         this.keyBindings.forEach((keyBinding, keyCode) => {
             if (!keyBinding.realtime) {
@@ -62,6 +90,9 @@ export default class PlayerController {
         })
     }
 
+    /**
+     * Register key bindings with corresponding commands.
+     */
     private setupKeyBindings() {
         this.keyBindings.set('KeyW', this.createMoveBinding(KeyboardKey.KeyW, 'MOVE_UP'));
         this.keyBindings.set('KeyS', this.createMoveBinding(KeyboardKey.KeyS, 'MOVE_DOWN'));
@@ -69,6 +100,13 @@ export default class PlayerController {
         this.keyBindings.set('KeyD', this.createMoveBinding(KeyboardKey.KeyD, 'MOVE_RIGHT'));
     }
 
+    /**
+     * Create key binding for movement.
+     * 
+     * @param key keyboard key
+     * @param move entity movement
+     * @returns key binding
+     */
     private createMoveBinding(key: KeyboardKey, move: Entities.Movement): KeyBinding {
         return {
             key: key,

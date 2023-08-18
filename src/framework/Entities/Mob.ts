@@ -16,14 +16,23 @@ export default class Mob extends Entity {
         this._speed = 50;
     }
 
+    /**
+     * Get category of mob.
+     */
     get category(): Category {
         return Category.Player;
     }
 
+    /**
+     * Get speed of mob.
+     */
     get speed(): number {
         return this._speed;
     }
 
+    /**
+     * Set new speed of mob.
+     */
     set speed(speed: number) {
         this._speed = speed;
     }
