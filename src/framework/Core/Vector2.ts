@@ -14,6 +14,14 @@ export default class Vector2 {
         return this.x === other.x && this.y === other.y;
     }
 
+    get magnitude(): number {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    get normalized(): Vector2 {
+        return new Vector2(this.x / Math.abs(this.magnitude), this.y / Math.abs(this.magnitude));
+    }
+
     /**
      * Create a vector with both components as 0 value.
      * 
