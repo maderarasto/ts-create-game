@@ -5,5 +5,5 @@ export default interface Commandable {
     /**
      * Handle command.
      */
-    onCommand(): void;
+    onCommand(command: Entities.Command): void;
 }

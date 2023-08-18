@@ -78,11 +78,11 @@ export default class Sprite implements Renderable {
 
         } else {
             context.drawImage(
-                this.spritesheet, 
-                this.position.x, 
-                this.position.y,
-                this.size.x,
-                this.size.y
+                this._spritesheet, 
+                this._position.x, 
+                this._position.y,
+                this._size.x,
+                this._size.y
             );
         }
     }
