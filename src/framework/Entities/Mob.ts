@@ -7,15 +7,25 @@ import Entity, { Category } from "./Entity";
  */
 export default class Mob extends Entity {
     private _velocity: Vector2;
+    private _speed: number
 
     constructor(sprite: Sprite) {
         super(sprite);
 
         this._velocity = Vector2.zero();
+        this._speed = 50;
     }
 
     get category(): Category {
         return Category.Player;
+    }
+
+    get speed(): number {
+        return this._speed;
+    }
+
+    set speed(speed: number) {
+        this._speed = speed;
     }
 
     /**
@@ -43,12 +53,14 @@ export default class Mob extends Entity {
      * @param deltaTime delta time between two frames.
      */
     update(deltaTime: number) {
-        const posX = this.position.x + this.velocity.x * deltaTime;
-        const posY = this.position.y + this.velocity.y * deltaTime;
+        if (Math.abs(this.velocity.x) > 0 && Math.abs(this.velocity.y) > 0) {
+            this.velocity = this.velocity.normalized;
+        }
+
+        const posX = this.position.x + this.velocity.x * deltaTime * this.speed;
+        const posY = this.position.y + this.velocity.y * deltaTime * this.speed;
 
         this.position = new Vector2(posX, posY);
-        // this.position.x += this.velocity.x;
-        // this.position.y += this.velocity.y;
 
         // Reset velocity
         this.velocity = Vector2.zero();

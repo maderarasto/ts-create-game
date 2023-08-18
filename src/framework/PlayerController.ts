@@ -78,7 +78,6 @@ export default class PlayerController {
                 action: (entity) => {
                     const mobEntity = entity as Mob;
                     let moveVector = PlayerController.MOVEMENT_VECTORS.get(move) as Vector2;
-                    moveVector = Vector2.multiply(moveVector, 100);
     
                     mobEntity.velocity = Vector2.add(mobEntity.velocity, moveVector);
                 }
