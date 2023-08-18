@@ -1,8 +1,8 @@
-import Mob from "./Entities/Mob";
-import { Category } from "./Entities/Entity";
-import Vector2 from "./Core/Vector2";
-import Queue from "./Core/Queue";
-import Input, { Keyboard, KeyboardKey } from "./Core/Input";
+import Mob from "../framework/Entities/Mob";
+import { Category } from "../framework/Entities/Entity";
+import Vector2 from "../framework/Core/Vector2";
+import Queue from "../framework/Core/Queue";
+import Input, { Keyboard, KeyboardKey } from "../framework/Core/Input";
 
 /**
  * Represents binding between player action identifier and its name.

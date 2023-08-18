@@ -2,7 +2,7 @@ import AssetManager from "../Assets/AssetManager";
 import Mob from "../Entities/Mob";
 import Sprite from "../Graphics/Sprite";
 import defines from "../defines";
-import PlayerController from "../PlayerController";
+import PlayerController from "../../game/PlayerController";
 import Vector2 from "./Vector2";
 import Queue from "./Queue";
 import EventsHandler from "./EventHandler";
