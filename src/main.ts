@@ -1,11 +1,13 @@
 import './style.css'
 import config from './config';
-import Application from './framework/Core/Application';
+import Game from './game/Game';
 
 const container = document.querySelector('#app') as HTMLDivElement;
-container.innerHTML = `
-  <canvas width="${config.default.width}" height="${config.default.height}"></canvas>
-`;
+const canvas = new HTMLCanvasElement();
 
-const game = new Application(config);
+canvas.width = config.default.width;
+canvas.height = config.default.height;
+container.append(canvas);
+
+const game = new Game(canvas, config);
 game.run();
