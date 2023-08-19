@@ -3,6 +3,7 @@ import { Category } from "../framework/Entities/Entity";
 import Vector2 from "../framework/Core/Vector2";
 import Queue from "../framework/Core/Structures/Queue";
 import Input, { Keyboard, KeyboardKey } from "../framework/Core/Input";
+import InputController from "../framework/Interfaces/InputController";
 
 /**
  * Represents binding between player action identifier and its name.
@@ -28,7 +29,7 @@ type KeyBinding = {
 /**
  * Provides funcitonality to specify input keys and its corresponding command to control playable characters.
  */
-export default class PlayerController {
+export default class PlayerController implements InputController {
     /**
      * Mapping of player move actions to corresponding vectors.
      */
