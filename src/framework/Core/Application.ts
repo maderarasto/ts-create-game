@@ -37,7 +37,7 @@ export default abstract class Application {
             config: config,
             assets: this.assets,
             inputController: this.inputController            
-        }
+        };
 
         this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
             const tankImage = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
