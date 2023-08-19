@@ -1,4 +1,4 @@
-import Queue from "./Queue";
+import Queue from "./Structures/Queue";
 
 /**
  * Provides functionality to handling events and pushing them into event queue.

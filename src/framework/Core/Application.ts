@@ -4,7 +4,7 @@ import Sprite from "../Graphics/Sprite";
 import defines from "../defines";
 import PlayerController from "../../game/PlayerController";
 import Vector2 from "./Vector2";
-import Queue from "./Queue";
+import Queue from "./Structures/Queue";
 import EventsHandler from "./EventHandler";
 
 export default abstract class Application {

@@ -10,17 +10,16 @@ export default class Queue<T> {
 
     /**
      * Get size of queue.
-     *
-     * @readonly
-     * @type {number}
-     * @memberof Queue
+     * 
+     * @returns queue size
      */
-    get length(): number {
+    size(): number {
         return this.items.length;
     }
 
     /**
      * Check if the queue is empty.
+     * 
      * @returns 
      */
     isEmpty(): boolean {

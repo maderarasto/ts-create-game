@@ -1,7 +1,7 @@
 import Mob from "../framework/Entities/Mob";
 import { Category } from "../framework/Entities/Entity";
 import Vector2 from "../framework/Core/Vector2";
-import Queue from "../framework/Core/Queue";
+import Queue from "../framework/Core/Structures/Queue";
 import Input, { Keyboard, KeyboardKey } from "../framework/Core/Input";
 
 /**
