@@ -84,3 +84,14 @@ namespace Entities {
         action: (entity: import('../Interfaces/Commandable').default) => void
     }
 }
+
+namespace States {
+    /**
+     * Represents an application context that can be shared between states.
+     */
+    type Context = {
+        config: Core.AppConfig,
+        assets: import('../Assets/AssetManager').default
+        inputController?: import('../Interfaces/InputController').default
+    }
+}

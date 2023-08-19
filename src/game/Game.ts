@@ -5,7 +5,7 @@ export default class Game extends Application {
     constructor(canvas: HTMLCanvasElement, config: Core.AppConfig) {
         super(canvas, config);
 
-        this.playerControler = new PlayerController();
+        this.inputController = new PlayerController();
     }
 
     /**

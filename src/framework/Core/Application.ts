@@ -2,10 +2,10 @@ import AssetManager from "../Assets/AssetManager";
 import Mob from "../Entities/Mob";
 import Sprite from "../Graphics/Sprite";
 import defines from "../defines";
-import PlayerController from "../../game/PlayerController";
 import Vector2 from "./Vector2";
 import Queue from "./Structures/Queue";
 import EventsHandler from "./EventHandler";
+import InputController from "../Interfaces/InputController";
 
 export default abstract class Application {
     // Application indicators
@@ -18,7 +18,9 @@ export default abstract class Application {
     // Managers and handlers
     private assets: AssetManager;
     private eventHandler: EventsHandler;
-    protected playerControler?: PlayerController;
+    protected inputController?: InputController;
+
+    private context: States.Context;
 
     // temporary properties for testing
     private mob?: Mob;
@@ -31,6 +33,11 @@ export default abstract class Application {
         this.assets = new AssetManager();
         this.commands = new Queue();
         this.eventHandler = new EventsHandler(this.canvas);
+        this.context = {
+            config: config,
+            assets: this.assets,
+            inputController: this.inputController            
+        }
 
         this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
             const tankImage = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
@@ -48,8 +55,8 @@ export default abstract class Application {
     run() {
         this.running = true;
 
-        if (!this.playerControler) {
-            throw new Error(`A component "PlayerController" is missing!`);
+        if (!this.inputController) {
+            throw new Error(`A component based on "InputController" is missing!`);
         }
 
         this.onStart();
@@ -84,10 +91,10 @@ export default abstract class Application {
     private handleEvents() {
         while (!this.eventHandler.isEmpty()) {
             const event = this.eventHandler.pollEvent();
-            this.playerControler?.handleKeyboardEvent(event, this.commands);
+            this.inputController?.handleKeyboardEvent(event, this.commands);
         }
 
-        this.playerControler?.handleRealtimeInput(this.commands);
+        this.inputController?.handleRealtimeInput(this.commands);
     }
 
     /**
