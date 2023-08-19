@@ -7,5 +7,5 @@ export default interface Updatable {
      * 
      * @param deltaTime delta time for current update.
      */
-    update(deltaTime: number): void;
+    update(deltaTime: number): void|boolean;
 }
