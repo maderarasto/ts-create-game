@@ -9,6 +9,11 @@ namespace Core {
     }
 
     /**
+     * Represents of a constructor of class T.
+     */
+    type Constructor<T> = { new (...args: any): T}
+
+    /**
      * Represents a type event that can occur in event queue.
      */
     type EventType = (
