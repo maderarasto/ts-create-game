@@ -94,9 +94,9 @@ namespace States {
     /**
      * Represents an application context that can be shared between states.
      */
-    type Context = {
+    type Context = Readonly<{
         config: Core.AppConfig,
         assets: import('../Assets/AssetManager').default
         inputController?: import('../Interfaces/InputController').default
-    }
+    }>
 }
