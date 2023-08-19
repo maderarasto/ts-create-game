@@ -3,7 +3,7 @@ import config from './config';
 import Game from './game/Game';
 
 const container = document.querySelector('#app') as HTMLDivElement;
-const canvas = new HTMLCanvasElement();
+const canvas = document.createElement('canvas');
 
 canvas.width = config.default.width;
 canvas.height = config.default.height;
