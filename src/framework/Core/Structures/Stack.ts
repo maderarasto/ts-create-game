@@ -60,4 +60,11 @@ export default class Stack<T> {
         
         return item;
     }
+
+    /**
+     * Clear all items in stack.
+     */
+    clear() {
+        this.items = [];
+    }
 }
