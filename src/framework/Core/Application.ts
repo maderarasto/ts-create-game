@@ -6,6 +6,7 @@ import Vector2 from "./Vector2";
 import Queue from "./Structures/Queue";
 import EventsHandler from "./EventHandler";
 import InputController from "../Interfaces/InputController";
+import StateStack from "../States/StateStack";
 
 export default abstract class Application {
     // Application indicators
@@ -19,8 +20,7 @@ export default abstract class Application {
     private assets: AssetManager;
     private eventHandler: EventsHandler;
     protected inputController?: InputController;
-
-    private context: States.Context;
+    protected readonly stateStack;
 
     // temporary properties for testing
     private mob?: Mob;
@@ -33,11 +33,11 @@ export default abstract class Application {
         this.assets = new AssetManager();
         this.commands = new Queue();
         this.eventHandler = new EventsHandler(this.canvas);
-        this.context = {
+        this.stateStack = new StateStack({
             config: config,
             assets: this.assets,
-            inputController: this.inputController            
-        };
+            inputController: this.inputController
+        })
 
         this.assets.loadImage(`${defines.ASSETS_DIR}/images/Tanks/tankBlue.png`, 'TANK_BLUE').then(() => {
             const tankImage = this.assets.get('image', 'TANK_BLUE') as HTMLImageElement;
@@ -90,11 +90,12 @@ export default abstract class Application {
      */
     private handleEvents() {
         while (!this.eventHandler.isEmpty()) {
-            const event = this.eventHandler.pollEvent();
-            this.inputController?.handleKeyboardEvent(event, this.commands);
+            this.stateStack.handleEvent(this.eventHandler.pollEvent());
+            
+            if (this.stateStack.isEmpty()) {
+                this.running = false;
+            }
         }
-
-        this.inputController?.handleRealtimeInput(this.commands);
     }
 
     /**
@@ -103,12 +104,7 @@ export default abstract class Application {
      * @param deltaTime time in seconds since last update call.
      */
     private update(deltaTime: number) {
-        while (!this.commands.isEmpty()) {
-            const command = this.commands.dequeue();
-            this.mob?.onCommand(command);
-        }
-
-        this.mob?.update(deltaTime);
+        this.stateStack.update(deltaTime);
     }
 
     /**
@@ -122,18 +118,7 @@ export default abstract class Application {
         }
 
         this.beforeRender(context);
-
-        context.fillStyle = 'black';
-        context.fillRect(0, 0, this.config.default.width, this.config.default.height);
-
-        context.fillStyle = 'white';
-        context.font = '24px sans-serif';
-        context.fillText('Hello World',
-            (this.config.default.width - context.measureText('Hello World').width) / 2,
-            (this.config.default.height - 24) / 2,
-        );
-
-        this.mob?.render(context);
+        this.stateStack.render(context);
     }
 
     abstract onStart(): void;

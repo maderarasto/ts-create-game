@@ -1,6 +1,7 @@
 import CanHandleEvent from "../Interfaces/CanHandleEvent";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
+import StateStack from "./StateStack";
 
 /**
  * Represents an abstract base state in which application can be.
@@ -9,6 +10,7 @@ import Updatable from "../Interfaces/Updatable";
  */
 export default abstract class State implements CanHandleEvent, Updatable, Renderable {
     constructor(
+        private stack: StateStack,
         protected context: States.Context
     ) {
 
@@ -41,14 +43,16 @@ export default abstract class State implements CanHandleEvent, Updatable, Render
     }
 
     /**
-     * Handle an event from event queue. 
+     * Handle an event from event queue. If result is false then state stack will not handle 
+     * events of next states.
      * 
      * @param event event
      */
     abstract handleEvent(event: Core.Event): boolean;
 
     /**
-     * Update a logic of current state.
+     * Update a logic of current state. If result is false then state stack will not update logic 
+     * of next states.
      * 
      * @param deltaTime seconds since last update.
      */

@@ -1,5 +1,6 @@
 import Application from "../framework/Core/Application";
 import PlayerController from "./PlayerController";
+import IntroState from "./states/IntroState";
 
 export default class Game extends Application {
     constructor(canvas: HTMLCanvasElement, config: Core.AppConfig) {
@@ -13,6 +14,11 @@ export default class Game extends Application {
      *  It runs once.
      */
     onStart() {
+        // Register states
+        this.stateStack.registerState('IntroState', IntroState);
+
+        // Request to push first state in stack
+        this.stateStack.requestPushState('IntroState');
     }
 
     /**
