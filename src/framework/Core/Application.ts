@@ -13,8 +13,7 @@ export default abstract class Application {
     
     // Timing a frames
     private lastUpdateTime: number = 0;
-    private lastFpsCountTime: number = 0;
-    private frames: number = 0;
+    public frames: number = 0;
     
     // Managers and handlers
     private assets: AssetManager;
@@ -65,14 +64,9 @@ export default abstract class Application {
     private processLoop(time: number) {
         const elapsedTime = time - this.lastUpdateTime;
         const elapsedSeconds = elapsedTime / 1000;
-        
-        this.lastUpdateTime = time;
-        this.lastFpsCountTime += elapsedTime;
 
-        if (this.lastFpsCountTime > 1000) {
-            this.lastFpsCountTime = 0;
-            this.frames = Math.round(1 / elapsedSeconds);
-        }
+        this.lastUpdateTime = time;
+        this.frames = Math.round(1 / elapsedSeconds);
 
         this.handleEvents();
         this.beforeUpdate(elapsedSeconds);
