@@ -18,9 +18,9 @@ This project was created for purpose to easily create game playable in browser f
 ✅ Entities for representation of static and movable objects<br />
 ✅ Commands a command queue for simple execution of entity actions<br />
 ✅ Input controller for simple registration input keys for player<br />
+✅ Application states and state stack<br />
 
 #### In development
-⌛ Application states and state stack<br />
 ⌛ UI library for simple rendering elements such as texts, static images, ...<br />
 ⌛ Collision systemm<br />
 ⌛ Animation using spritesheet<br />
