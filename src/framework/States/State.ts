@@ -25,8 +25,8 @@ export default abstract class State implements CanHandleEvent, Updatable, Render
      * 
      * @param stateName name of pushed state.
      */
-    requestPushState(stateName: string) {
-        // TODO: request from stack to push new state.
+    requestPushState(stateKey: string) {
+        this.stack.requestPushState(stateKey);
     }
 
     /**
@@ -34,7 +34,7 @@ export default abstract class State implements CanHandleEvent, Updatable, Render
      * All requests will be processed after handling events and update logic in state stack.
      */
     requestPopState() {
-        // TODO: request from stack to pop out last pushed state.
+        this.stack.requestPopState();
     }
 
     /**
@@ -42,7 +42,7 @@ export default abstract class State implements CanHandleEvent, Updatable, Render
      * All requests will be processed after handling events and update logic in state stack.
      */
     requestClearStates() {
-        // TODO: request from stack to clear all states.
+        this.stack.requestClearStates();
     }
 
     /**
