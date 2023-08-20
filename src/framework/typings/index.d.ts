@@ -100,3 +100,36 @@ namespace States {
         inputController?: import('../Interfaces/InputController').default
     }>
 }
+
+namespace UI {
+    /**
+     * Represents on which side can be UI element aligned.
+     */
+    type Alignment = (
+        | 'start'
+        | 'center'
+        | 'end'
+    )
+
+    /**
+     * Represents properties of UI element
+     */
+    type Props = {
+        x: number
+        y: number
+        width: number
+        height: number
+        borderColor: string
+        backgroundColor: string
+    }
+
+    /**
+     * Represents properties of UI element and text element.
+     */
+    type TextProps = Props & {
+        font: string
+        text: string
+        textColor: string
+        textAlign: Alignment
+    }
+}
