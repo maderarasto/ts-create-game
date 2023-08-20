@@ -18,8 +18,10 @@ export default class IntroState extends State {
     }
     
     render(context: CanvasRenderingContext2D): void {
-        context.fillStyle = 'black';
+        context.fillStyle = 'white';
         context.fillRect(0, 0, this.context.config.default.width, this.context.config.default.height);
+
+        super.render(context);
     }
 
 }

@@ -114,22 +114,22 @@ namespace UI {
     /**
      * Represents properties of UI element
      */
-    type Props = {
+    type Props = Partial<{
         x: number
         y: number
         width: number
         height: number
         borderColor: string
         backgroundColor: string
-    }
+    }>
 
     /**
      * Represents properties of UI element and text element.
      */
-    type TextProps = Props & {
+    type TextProps = Props & Partial<{
         font: string
         text: string
         textColor: string
         textAlign: Alignment
-    }
+    }>
 }

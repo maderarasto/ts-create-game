@@ -1,6 +1,7 @@
 import CanHandleEvent from "../Interfaces/CanHandleEvent";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
+import Canvas from "../UI/Canvas";
 import StateStack from "./StateStack";
 
 /**
@@ -9,11 +10,13 @@ import StateStack from "./StateStack";
  * updating logic and rendering its own assets.
  */
 export default abstract class State implements CanHandleEvent, Updatable, Renderable {
+    protected canvas: Canvas;
+
     constructor(
         private stack: StateStack,
         protected context: States.Context
     ) {
-
+        this.canvas = new Canvas(0, 0, context.config.default.width, context.config.default.height);
     }
 
     /**
@@ -63,5 +66,7 @@ export default abstract class State implements CanHandleEvent, Updatable, Render
      * 
      * @param context 2d rendering context.
      */
-    abstract render(context: CanvasRenderingContext2D): void;
+    render(context: CanvasRenderingContext2D) {
+        this.canvas.render(context);
+    }
 }
