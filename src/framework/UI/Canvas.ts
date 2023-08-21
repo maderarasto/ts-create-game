@@ -1,12 +1,13 @@
 import CanHandleEvent from "../Interfaces/CanHandleEvent";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
+import Element from "./Element";
 
 /**
  * Provides functionality for rendering UI elements and better positioning on renderable area.
  */
 export default class Canvas implements CanHandleEvent, Updatable, Renderable {
-    private elements: Map<string, Renderable>;
+    private elements: Map<string, Element>;
     public backgroundColor: string;
 
     constructor(
@@ -25,7 +26,7 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      * @param id unique id of new element.
      * @param element UI element.
      */
-    addElement(id: string, element: Renderable) {
+    addElement(id: string, element: Element) {
         if (this.elements.has(id)) {
             throw new Error(`UI Element with id "${id}" already exist!`);
         }
@@ -70,7 +71,9 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      */
     handleEvent(event: Core.Event): void {
         this.elements.forEach((element, id) => {
-            // TODO: Call handle event on element that can handle events
+            if ('handleEvent' in element) {
+                (element as CanHandleEvent).handleEvent(event);
+            }
         });
     }
     
@@ -81,7 +84,9 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      */
     update(deltaTime: number): void {
         this.elements.forEach((element, id) => {
-            // TODO: Call update on element that can be updatable.
+            if ('update' in element) {
+                (element as Updatable).update(deltaTime);
+            }
         })
     }
 
@@ -99,6 +104,12 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
         
         context.fillRect(this.x, this.y, this.width, this.height);
         context.globalAlpha = 1;
+
+        this.elements.forEach((element, id) => {
+            if ('render' in element) {
+                element.render(context);
+            }
+        })
     }
 
 }

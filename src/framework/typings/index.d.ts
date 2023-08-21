@@ -14,6 +14,11 @@ namespace Core {
     type Constructor<T> = { new (...args: any): T}
 
     /**
+     * Represents that will be parsed to number or boolean
+     */
+    type Parse<T> = T extends string ? string : T extends boolean ? boolean : number;
+
+    /**
      * Represents a type event that can occur in event queue.
      */
     type EventType = (
@@ -114,22 +119,22 @@ namespace UI {
     /**
      * Represents properties of UI element
      */
-    type Props = Partial<{
+    type Props = {
         x: number
         y: number
         width: number
         height: number
         borderColor: string
         backgroundColor: string
-    }>
+    }
 
     /**
      * Represents properties of UI element and text element.
      */
-    type TextProps = Props & Partial<{
+    type TextProps = Props & {
         font: string
         text: string
         textColor: string
         textAlign: Alignment
-    }>
+    }
 }
