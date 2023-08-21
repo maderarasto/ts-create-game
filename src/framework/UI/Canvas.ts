@@ -7,7 +7,7 @@ import Element from "./Element";
  * Provides functionality for rendering UI elements and better positioning on renderable area.
  */
 export default class Canvas implements CanHandleEvent, Updatable, Renderable {
-    private elements: Map<string, Element>;
+    private elements: Map<string, Element<UI.Props>>;
     public backgroundColor: string;
 
     constructor(
@@ -26,12 +26,12 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      * @param id unique id of new element.
      * @param element UI element.
      */
-    addElement(id: string, element: Element) {
+    addElement<P>(id: string, element: Element<P>) {
         if (this.elements.has(id)) {
             throw new Error(`UI Element with id "${id}" already exist!`);
         }
 
-        this.elements.set(id, element);
+        this.elements.set(id, element as unknown as Element<UI.Props>);
     }
 
     /**
@@ -40,8 +40,8 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      * @param id unique id of searched element.
      * @returns UI element or undefined.
      */
-    findElement(id: string) {
-        return this.elements.get(id);
+    findElement<P>(id: string) {
+        return this.elements.get(id) as unknown as Element<P>;
     }
 
     /**

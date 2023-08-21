@@ -7,23 +7,28 @@ type PropsValue = UI.Props[PropsKey];
  * Represents an abstract UI element that can be rendered on canvas or individually.
  * Each UI element can be customized with properties such as position, size and colors.
  */
-export default abstract class Element implements Renderable {
-    protected static readonly DEFAULT_PROPS: UI.Props = {
-        x: 0, 
+export default abstract class Element<P> implements Renderable {
+    protected static readonly DEFAULT_VALUES: UI.Props = {
+        x: 0,
         y: 0,
         width: 0,
         height: 0,
-        backgroundColor: 'transparent',
-        borderColor: 'transparent'
-    };
+        borderColor: 'transparent',
+        backgroundColor: 'transparent'
+    }
 
-    protected props: UI.Props;
+    protected props: Map<keyof P, P[keyof P]>;
 
-    constructor(props: Partial<UI.Props>) {
-        this.props = {
-            ...Element.DEFAULT_PROPS,
-            ...props
-        }
+    constructor(props: Partial<P>) {
+        this.props = new Map();
+        
+        const defaultValues = this.getDefaultValues(this);
+        Object.entries(defaultValues).forEach(([key, prop]) => {
+            type PropKey = keyof typeof props;
+            const value = props[key as PropKey] !== undefined ? props[key as PropKey] : prop;
+
+            this.props.set(key as keyof P, value as P[keyof P]);
+        })
     }
 
     /**
@@ -31,28 +36,22 @@ export default abstract class Element implements Renderable {
      * 
      * @param name name of property.
      */
-    prop(name: PropsKey): PropsValue;
-
+    prop(name: keyof P): P[keyof P];
+    
     /**
      * Set a new value to property.
      * 
      * @param name name of property.
      * @param value new value of property.
      */
-    prop(name: PropsKey, value: PropsValue) : void;
-    prop(name: PropsKey, value?: PropsValue): PropsValue | void {
-        const property = this.props[name];
-
+    prop(name: keyof P, value: P[keyof P]): void;
+    prop(name: keyof P, value?: P[keyof P]): P[keyof P] | void {
         if (!value) {
-            return this.props[name];
+            return this.props.get(name);
         }
-        
-        this.props = {
-            ...this.props,
-            ...{
-                [name]: value as typeof property
-            }
-        }
+
+        this.props.set(name, value);
+        console.log(this.props);
     }
 
     /**
@@ -61,14 +60,42 @@ export default abstract class Element implements Renderable {
      * @param context 2d rendering context.
      */
     render(context: CanvasRenderingContext2D): void {
-        if (this.props.backgroundColor !== 'transparent') {
-            context.fillStyle = this.props.backgroundColor;
-            context.fillRect(this.props.x, this.props.y, this.props.width, this.props.height);
+        const backgroundColor = this.props.get('backgroundColor' as keyof P);
+        const borderColor = this.props.get('borderColor' as keyof P);
+
+        if (backgroundColor !== 'transparent') {
+            context.fillStyle = backgroundColor as string;
+            context.fillRect(
+                this.props.get('x' as keyof P) as number,
+                this.props.get('y' as keyof P) as number,
+                this.props.get('width' as keyof P) as number,
+                this.props.get('height' as keyof P) as number
+            );
         }
 
-        if (this.props.borderColor !== 'transparent') {
-            context.strokeStyle = this.props.borderColor;
-            context.strokeRect(this.props.x, this.props.y, this.props.width, this.props.height);
+        if (borderColor !== 'transparent') {
+            context.strokeStyle = borderColor as string;
+            context.strokeRect(
+                this.props.get('x' as keyof P) as number,
+                this.props.get('y' as keyof P) as number,
+                this.props.get('width' as keyof P) as number,
+                this.props.get('height' as keyof P) as number
+            );
         }
+    }
+
+    /**
+     * Get default values based on child class.
+     * 
+     * @param target 
+     * @returns 
+     */
+    private getDefaultValues<T>(target: T) {
+        type This = {
+            constructor: This
+            DEFAULT_VALUES: UI.Props
+        } & T;
+
+        return (target as This).constructor.DEFAULT_VALUES;
     }
 }
