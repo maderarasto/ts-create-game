@@ -116,6 +116,13 @@ namespace UI {
         | 'end'
     )
 
+    type Anchor = Partial<{
+        horizontal: Alignment
+        vertical: Alignment
+        offsetX: number
+        offsetY: number
+    }>
+
     /**
      * Represents properties of UI element
      */

@@ -1,8 +1,16 @@
-import Element from "./Element";
+import Component from "./Component";
 
-export default class Text extends Element<UI.TextProps> {
+/**
+ * Represents a text UI component for display text on canvas. Text component can be customized by
+ * actual text, text color, font and alignment. If box of text is smaller ten actual text for given font
+ * then size of text box is updated based on size of actual text.
+ */
+export default class Text extends Component<UI.TextProps> {
+    /**
+     * Represents default values for a text component that extends default values of a base UI compojnent
+     */
     protected static readonly DEFAULT_VALUES: UI.TextProps = {
-        ...Element.DEFAULT_VALUES,
+        ...Component.DEFAULT_VALUES,
         font: '16px sans-serif',
         text: '',
         textColor: 'black',
@@ -16,6 +24,11 @@ export default class Text extends Element<UI.TextProps> {
         
     }
 
+    /**
+     * Render text with given style at top of base component rendering.
+     * 
+     * @param context 
+     */
     render(context: CanvasRenderingContext2D): void {
         super.render(context);
 
@@ -52,13 +65,22 @@ export default class Text extends Element<UI.TextProps> {
         context.fillText(text, x, y);
     }
 
-    private calculatePositionWithAlign(axis: number, align: UI.Alignment, boxSpan: number, textSpan: number): number {
+    /**
+     * Calculate position based on alignment within a box around text.
+     * 
+     * @param position position on axis
+     * @param align alignment on axis
+     * @param boxSpan box size on axis
+     * @param textSpan text size on axis
+     * @returns position based on alignment.
+     */
+    private calculatePositionWithAlign(position: number, align: UI.Alignment, boxSpan: number, textSpan: number): number {
         if (align === 'end') {
-            axis += boxSpan - textSpan
+            position += boxSpan - textSpan
         } else if (align === 'center') {
-            axis = (boxSpan - textSpan) / 2
+            position += (boxSpan - textSpan) / 2
         }
 
-        return axis;
+        return position;
     }
 }

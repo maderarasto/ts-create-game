@@ -1,13 +1,13 @@
 import CanHandleEvent from "../Interfaces/CanHandleEvent";
 import Renderable from "../Interfaces/Renderable";
 import Updatable from "../Interfaces/Updatable";
-import Element from "./Element";
+import Component from "./Component";
 
 /**
- * Provides functionality for rendering UI elements and better positioning on renderable area.
+ * Provides functionality for rendering UI components and better positioning on renderable area.
  */
 export default class Canvas implements CanHandleEvent, Updatable, Renderable {
-    private elements: Map<string, Element<UI.Props>>;
+    private components: Map<string, Component<UI.Props>>;
     public backgroundColor: string;
 
     constructor(
@@ -16,84 +16,90 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
         public readonly width: number,
         public readonly height: number
     ) {
-        this.elements = new Map();
+        this.components = new Map();
         this.backgroundColor = 'transparent';
     }
 
     /**
-     * Add a new UI element to canvas identified by unique id.
+     * Add a new UI component to canvas identified by unique id.
      * 
-     * @param id unique id of new element.
-     * @param element UI element.
+     * @param id unique id of new component.
+     * @param element UI component.
+     * @param anchor anchor on canvas.
      */
-    addElement<P>(id: string, element: Element<P>) {
-        if (this.elements.has(id)) {
-            throw new Error(`UI Element with id "${id}" already exist!`);
+    addElement<P>(id: string, element: Component<P>, anchor?: UI.Anchor) {
+        if (this.components.has(id)) {
+            throw new Error(`UI component with id "${id}" already exist!`);
         }
 
-        this.elements.set(id, element as unknown as Element<UI.Props>);
+        this.components.set(id, element as unknown as Component<UI.Props>);
+        
+        if (anchor) {
+            element.setAnchorTo(anchor, this);
+        }
     }
 
     /**
-     * Find a UI element added to canvas by its id.
+     * Find a UI component added to canvas by its id.
      * 
-     * @param id unique id of searched element.
-     * @returns UI element or undefined.
+     * @param id unique id of searched component.
+     * @returns UI component or undefined.
      */
     findElement<P>(id: string) {
-        return this.elements.get(id) as unknown as Element<P>;
+        return this.components.get(id) as unknown as Component<P>;
     }
 
     /**
-     * Remove a UI element from canvas by identifier.
+     * Remove a UI component from canvas by identifier.
      * 
-     * @param id unique id of UI element.
+     * @param id unique id of UI component.
      */
     removeElement(id: string) {
-        if (!this.elements.has(id)) {
-            throw new Error(`UI element with id "${id}" not found!`);
+        if (!this.components.has(id)) {
+            throw new Error(`UI component with id "${id}" not found!`);
         }
 
-        this.elements.delete(id);
+        this.components.get(id)?.removeAnchor();
+        this.components.delete(id);
     }
 
     /**
-     * Clear all UI elements of canvas.
+     * Clear all UI components of canvas.
      */
     clear() {
-        this.elements.clear();
+        this.components.clear();
     }
 
     /**
-     * Handle event for each UI element that can handle events.
+     * Handle event for each UI component that can handle events.
      * 
      * @param event event from event queue.
      */
     handleEvent(event: Core.Event): void {
-        this.elements.forEach((element, id) => {
-            if ('handleEvent' in element) {
-                (element as CanHandleEvent).handleEvent(event);
+        this.components.forEach((component) => {
+            if ('handleEvent' in component) {
+                (component as CanHandleEvent).handleEvent(event);
             }
         });
     }
     
     /**
-     * Update a logic for each UI element that can be updatable.
+     * Update a logic for each UI component that can be updatable.
      * 
      * @param deltaTime seconds since last update.
      */
     update(deltaTime: number): void {
-        this.elements.forEach((element, id) => {
-            if ('update' in element) {
-                (element as Updatable).update(deltaTime);
+        this.components.forEach((component) => {
+            if ('update' in component) {
+                (component as Updatable).update(deltaTime);
             }
         })
     }
 
     /**
-     * Render background of canvas with each element on it.
+     * Render background of canvas with each component on it.
      * 
-     * @param context 2d renmdering context.
+     * @param context 2d rendering context.
      */
     render(context: CanvasRenderingContext2D): void {
         if (this.backgroundColor === 'transparent') {
@@ -105,9 +111,9 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
         context.fillRect(this.x, this.y, this.width, this.height);
         context.globalAlpha = 1;
 
-        this.elements.forEach((element, id) => {
-            if ('render' in element) {
-                element.render(context);
+        this.components.forEach((component) => {
+            if ('render' in component) {
+                component.render(context);
             }
         })
     }

@@ -10,14 +10,17 @@ export default class IntroState extends State {
         super(stack, context);
 
         const text = new Text({
-            x: 0,
-            text: 'Hello yWorld!',
-            textAlign: 'center',
-            textColor: '#000',
-            verticalAlign: 'center'
+            x: 100,
+            y: 150,
+            text: 'Hello yWorld!'
         });
 
-        this.canvas.addElement('text', text);
+        this.canvas.addElement('text', text, {
+            horizontal: 'end',
+            vertical: 'start',
+            offsetX: 25,
+            offsetY: 25
+         });
     }
 
     handleEvent(event: Core.Event): boolean {
