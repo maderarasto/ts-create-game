@@ -55,7 +55,7 @@ namespace Core {
     type Event = {
         type: EventType
     } | {
-        type: 'KeyDown' | 'KeyUp' | 'MouseDown' | 'MouseUp' | 'MouseMove'|'MouseEnter'|'MouseLeave' | 'MouseWheel',
+        type: 'KeyDown' | 'KeyUp' | 'MouseDown' | 'MouseUp' | 'MouseMove' | 'MouseEnter' | 'MouseLeave' | 'MouseWheel',
         alt: boolean
         ctrl: boolean
         shift: boolean
@@ -108,7 +108,7 @@ namespace States {
 
 namespace UI {
     /**
-     * Represents on which side can be UI element aligned.
+     * Represents on which side can be UI component aligned.
      */
     type Alignment = (
         | 'start'
@@ -124,7 +124,7 @@ namespace UI {
     }>
 
     /**
-     * Represents properties of UI element
+     * Represents properties of UI component
      */
     type Props = {
         x: number
@@ -136,7 +136,7 @@ namespace UI {
     }
 
     /**
-     * Represents properties of UI element and text element.
+     * Represents properties of UI component and text component.
      */
     type TextProps = Props & {
         font: string
@@ -144,5 +144,12 @@ namespace UI {
         textColor: string
         textAlign: Alignment
         verticalAlign: Alignment
+    }
+
+    /**
+     * Represents properties of UI component and image component.
+     */
+    type ImageProps = Props & {
+        source: HTMLImageElement
     }
 }
