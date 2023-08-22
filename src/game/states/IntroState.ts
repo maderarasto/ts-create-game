@@ -1,5 +1,6 @@
 import State from "../../framework/States/State";
 import StateStack from "../../framework/States/StateStack";
+import Text from "../../framework/UI/Text";
 
 /**
  * Represents a first state after application started.
@@ -7,6 +8,16 @@ import StateStack from "../../framework/States/StateStack";
 export default class IntroState extends State {
     constructor(stack: StateStack, context: States.Context) {
         super(stack, context);
+
+        const text = new Text({
+            x: 0,
+            text: 'Hello yWorld!',
+            textAlign: 'center',
+            textColor: '#000',
+            verticalAlign: 'center'
+        });
+
+        this.canvas.addElement('text', text);
     }
 
     handleEvent(event: Core.Event): boolean {

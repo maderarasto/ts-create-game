@@ -136,5 +136,6 @@ namespace UI {
         text: string
         textColor: string
         textAlign: Alignment
+        verticalAlign: Alignment
     }
 }

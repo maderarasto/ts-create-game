@@ -1,7 +1,4 @@
 import Renderable from "../Interfaces/Renderable";
-
-type PropsKey = keyof UI.Props;
-type PropsValue = UI.Props[PropsKey];
  
 /**
  * Represents an abstract UI element that can be rendered on canvas or individually.
@@ -51,7 +48,6 @@ export default abstract class Element<P> implements Renderable {
         }
 
         this.props.set(name, value);
-        console.log(this.props);
     }
 
     /**
