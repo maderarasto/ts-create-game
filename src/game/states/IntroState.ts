@@ -1,6 +1,7 @@
 import State from "../../framework/States/State";
 import StateStack from "../../framework/States/StateStack";
-import Text from "../../framework/UI/Text";
+import Image from "../../framework/UI/Image";
+import defines from "../../framework/defines";
 
 /**
  * Represents a first state after application started.
@@ -9,18 +10,21 @@ export default class IntroState extends State {
     constructor(stack: StateStack, context: States.Context) {
         super(stack, context);
 
-        const text = new Text({
-            x: 100,
-            y: 150,
-            text: 'Hello yWorld!'
+        context.assets.loadImage(`${defines.ASSETS_DIR}/images/sample.png`, 'SAMPLE').then(() => {
+            const asset = context.assets.get('image', 'SAMPLE');
+            const image = new Image({
+                source: asset
+            });
+
+            this.canvas.addElement('img', image);
         });
 
-        this.canvas.addElement('text', text, {
-            horizontal: 'end',
-            vertical: 'start',
-            offsetX: 25,
-            offsetY: 25
-         });
+        setTimeout(() => {
+            context.assets.loadImage(`${defines.ASSETS_DIR}/images/sheet_tanks.png`, 'SHEET_TANKS').then(() => {
+                const asset = context.assets.get('image', 'SHEET_TANKS');
+                this.canvas.findElement<UI.ImageProps>('img').prop('source', asset);
+            });
+        }, 5000);
     }
 
     handleEvent(event: Core.Event): boolean {

@@ -121,6 +121,7 @@ namespace UI {
         vertical: Alignment
         offsetX: number
         offsetY: number
+        stretch: boolean
     }>
 
     /**
@@ -150,6 +151,6 @@ namespace UI {
      * Represents properties of UI component and image component.
      */
     type ImageProps = Props & {
-        source: HTMLImageElement
+        source?: HTMLImageElement
     }
 }
