@@ -45,7 +45,7 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      * @param id unique id of searched component.
      * @returns UI component or undefined.
      */
-    findElement<P>(id: string) {
+    findElement<P extends UI.Props>(id: string) {
         return this.components.get(id) as unknown as Component<P>;
     }
 
