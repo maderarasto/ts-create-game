@@ -20,8 +20,6 @@ export default class Text extends Component<UI.TextProps> {
 
     constructor(props: Partial<UI.TextProps> = {}) {
         super(props);
-
-        
     }
 
     /**

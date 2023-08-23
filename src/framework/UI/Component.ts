@@ -56,9 +56,13 @@ export default abstract class Component<P> implements Renderable {
      */
     prop(name: keyof P, value: P[keyof P]): void;
     prop(name: keyof P, value?: P[keyof P]): P[keyof P] | void {
-        if (!value) {
-            if (['x', 'y'].includes(name as string) && this.anchor && this.canvas) {
-                return this.resolveAxisPosition(name as 'x'|'y') as P[keyof P];
+        if (value === undefined) {
+            if (this.anchor && this.canvas) {
+                if (['x', 'y'].includes(name as string)) {
+                    return this.resolveAxisPosition(name as 'x'|'y') as P[keyof P];
+                } else if (['width', 'height'].includes(name as string)) {
+                    return this.resolveSideLength(name as 'width'|'height') as P[keyof P];
+                }
             }
 
             return this.props.get(name);
@@ -113,72 +117,46 @@ export default abstract class Component<P> implements Renderable {
     }
 
     /**
-     * Resolve position of element for given axis based on anchor to canvas.
+     * Resolve position of component for given axis based on anchor to canvas.
      * 
      * @param axis axis type
      * @returns resolved position
      */
     private resolveAxisPosition(axis: 'x'|'y') {
-        let position = 0;
+        let position = (axis === 'x' ? this.props.get('x' as keyof P) : this.props.get('y' as keyof P)) as number;
+        const align = (axis === 'x' ? this.anchor?.horizontal : this.anchor?.vertical) as UI.Alignment;
+        const canvasPosition = (axis === 'x' ? this.canvas?.x : this.canvas?.y) as number;
+        const canvasSideLength = (axis === 'x' ? this.canvas?.width : this.canvas?.height) as number;
+        const componentSideLength = (axis === 'x' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
+        const offset = (axis === 'x' ? this.anchor?.offsetX ?? 0 : this.anchor?.offsetY ?? 0) as number;
 
-        const x = this.props.get('x' as keyof P) as number;
-        const y = this.props.get('y' as keyof P) as number;
-        const width = this.prop('width' as keyof P) as number;
-        const height = this.prop('height' as keyof P) as number;
-
-        if (axis === 'x') {
-            position = this.calculatePositionByAnchor(
-                this.anchor?.horizontal as UI.Alignment, 
-                this.canvas?.x as number,
-                this.canvas?.width as number,
-                width,
-                this.anchor?.offsetX as number,
-                x
-            );
-        } else if (axis === 'y') {
-            position = this.calculatePositionByAnchor(
-                this.anchor?.vertical as UI.Alignment, 
-                this.canvas?.y as number,
-                this.canvas?.height as number,
-                height,
-                this.anchor?.offsetY as number,
-                y
-            );
+        if (this.anchor?.stretch) {
+            position = canvasPosition;
+        } else if (align === 'start') {
+            position = canvasPosition + offset;
+        } else if (align === 'center') {
+            position = (canvasSideLength - componentSideLength) / 2 + offset;
+        }  else if (align === 'end') {
+            position = canvasPosition + canvasSideLength - componentSideLength - offset;
         }
 
         return position;
     }
 
     /**
-     * Calculate position based on alignment, offset and spans.
+     * Resolve size of component for given side based on anchor to canvas.
      * 
-     * @param align alignment
-     * @param canvasPosition canvas position on axis
-     * @param canvasSpan canvas size on axis
-     * @param componentSpan component size on axis
-     * @param offset offset from given alignment
-     * @param defaultValue default position value.
-     * 
-     * @returns position on axis.
+     * @param side side of component.
+     * @returns resolved side length.
      */
-    private calculatePositionByAnchor(
-        align: UI.Alignment, 
-        canvasPosition: number, 
-        canvasSpan: number, 
-        componentSpan: number,
-        offset: number = 0,
-        defaultValue = 0
-    ) {
-        let position = defaultValue;
+    private resolveSideLength(side: 'width' | 'height') {
+        let sideLength = (side === 'width' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
+        const canvasSideLength = (side === 'width' ? this.canvas?.width : this.canvas?.height) as number;
 
-        if (align === 'start') {
-            position = canvasPosition + offset;
-        } else if (align === 'center') {
-            position = (canvasSpan - componentSpan) / 2 + offset;
-        } else if (align === 'end') {
-            position = canvasPosition + canvasSpan - componentSpan - offset;
+        if (this.anchor?.stretch) {
+            sideLength = canvasSideLength;
         }
 
-        return position;
+        return sideLength;
     }
 }
