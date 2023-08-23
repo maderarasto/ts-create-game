@@ -1,5 +1,5 @@
 type AssetType = 'image';
-type Asset = HTMLElement;
+type Asset = HTMLImageElement;
 type AssetMap = Map<string, Asset>;
 
 /**
@@ -47,9 +47,12 @@ export default class AssetManager {
                     }
 
                     const image = new Image();
+                    image.onload = (() => {
+                        this.imageAssets.set(key, image);
+                        resolve();
+                    })
+                    
                     image.src = URL.createObjectURL(request.response);
-                    this.imageAssets.set(key, image);
-                    resolve();
                 } else if (request.status === 404) {
                     reject(
                         new Error(`File not found with path ${path}!`)
