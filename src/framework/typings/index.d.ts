@@ -26,7 +26,7 @@ namespace Core {
         | 'KeyUp'
         | 'MouseDown'
         | 'MouseUp'
-        | 'MouseMove'
+        | 'MouseOver'
         | 'MouseEnter'
         | 'MouseLeave'
         | 'MouseWheel'
@@ -55,7 +55,7 @@ namespace Core {
     type Event = {
         type: EventType
     } | {
-        type: 'KeyDown' | 'KeyUp' | 'MouseDown' | 'MouseUp' | 'MouseMove' | 'MouseEnter' | 'MouseLeave' | 'MouseWheel',
+        type: 'KeyDown' | 'KeyUp' | 'MouseDown' | 'MouseUp' | 'MouseOver' | 'MouseEnter' | 'MouseLeave' | 'MouseWheel',
         alt: boolean
         ctrl: boolean
         shift: boolean
@@ -64,7 +64,7 @@ namespace Core {
         code: string
         key: string
     } | {
-        type: 'MouseDown' | 'MouseUp' | 'MouseMove'|'MouseEnter'|'MouseLeave' | 'MouseWheel',
+        type: 'MouseDown' | 'MouseUp' | 'MouseOver' | 'MouseEnter' | 'MouseLeave' | 'MouseWheel',
         x: number
         y: number
     } | {
@@ -77,10 +77,20 @@ namespace Core {
 
     type KeyboardEvent = Event & {
         type: 'KeyDown'|'KeyUp'
+        code: string
+        key: string
+        alt: boolean
+        ctrl: boolean
+        shift: boolean
     }
 
-    type MouseMoveEvent = Event & {
-        type: 'MouseMove' | 'MouseEnter' | 'MouseLeave'
+    type MouseOverEvent = Event & {
+        type: 'MouseOver' | 'MouseEnter' | 'MouseLeave',
+        x: number
+        y: number
+        alt: boolean
+        ctrl: boolean
+        shift: boolean
     }
 }
 

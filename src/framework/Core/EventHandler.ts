@@ -16,7 +16,7 @@ export default class EventsHandler {
      * List of mouse event types for movement and entering/leaving area.
      */
     private static readonly MOUSE_MOVE_EVENT_TYPES = [
-        'MouseMove', 
+        'MouseOver', 
         'MouseEnter', 
         'MouseLeave', 
     ] as const;
@@ -46,9 +46,7 @@ export default class EventsHandler {
         keyup: 'KeyUp',
         mousedown: 'MouseDown',
         mouseup: 'MouseUp',
-        mousemove: 'MouseMove',
-        mouseenter: 'MouseEnter',
-        mouseleave: 'MouseLeave',
+        mousemove: 'MouseOver',
         wheel: 'MouseWheel'
     };
 
@@ -62,8 +60,6 @@ export default class EventsHandler {
         window.addEventListener('keydown', this.handleKeyboardEvent.bind(this));
         window.addEventListener('keyup', this.handleKeyboardEvent.bind(this));
         window.addEventListener('mousemove', this.handleMouseMoveEvent.bind(this));
-        window.addEventListener('mouseenter', this.handleMouseMoveEvent.bind(this));
-        window.addEventListener('mouseleave', this.handleMouseMoveEvent.bind(this));
         window.addEventListener('mousedown', this.handleMouseButtonEvent.bind(this));
         window.addEventListener('mouseup', this.handleMouseButtonEvent.bind(this));
         window.addEventListener('wheel', this.handleMouseWheelEvent.bind(this));
