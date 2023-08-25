@@ -1,3 +1,5 @@
+import Rect from "../Core/Rect";
+import CanHandleEvent from "../Interfaces/CanHandleEvent";
 import Renderable from "../Interfaces/Renderable";
 import Canvas from "./Canvas";
  
@@ -5,7 +7,7 @@ import Canvas from "./Canvas";
  * Represents an abstract UI component that can be rendered on canvas or individually.
  * Each UI component can be customized with properties such as position, size and colors.
  */
-export default abstract class Component<P> implements Renderable {
+export default abstract class Component<P extends UI.Props> implements CanHandleEvent, Renderable {
     protected static readonly DEFAULT_VALUES: UI.Props = {
         x: 0,
         y: 0,
@@ -16,11 +18,21 @@ export default abstract class Component<P> implements Renderable {
     }
 
     protected props: Map<keyof P, P[keyof P]>;
+    protected states: Map<Core.EventType, boolean>;
+    
     private canvas?: Canvas;
     private anchor?: UI.Anchor;
 
+    // event handlers
+    public onMouseOver?: (event: Core.MouseOverEvent) => void;
+    public onMouseEnter?: (event: Core.MouseOverEvent) => void;
+    public onMouseLeave?: (event: Core.MouseOverEvent) => void;
+
     constructor(props: Partial<P>) {
         this.props = new Map();
+        this.states = new Map([
+            ['MouseOver', false]
+        ])
         
         const defaultValues = this.getDefaultValues(this);
         Object.entries(defaultValues).forEach(([key, prop]) => {
@@ -31,11 +43,29 @@ export default abstract class Component<P> implements Renderable {
         })
     }
 
+    get bounds(): Rect {
+        return new Rect(
+            this.prop('x') as number,
+            this.prop('y') as number,
+            this.prop('width') as number,
+            this.prop('height') as number,
+        )
+    }
+
+    /**
+     * Set anchor on target.
+     * 
+     * @param anchor anchor or target.
+     * @param target canvas.
+     */
     setAnchorTo(anchor: UI.Anchor, target: Canvas) {
         this.anchor = anchor;
         this.canvas = target;
     }
 
+    /**
+     * Remove anchor of component on target.
+     */
     removeAnchor() {
         this.canvas = undefined;
         this.anchor = undefined;
@@ -57,18 +87,54 @@ export default abstract class Component<P> implements Renderable {
     prop(name: keyof P, value: P[keyof P]): void;
     prop(name: keyof P, value?: P[keyof P]): P[keyof P] | void {
         if (value === undefined) {
+            let computedValue = this.props.get(name);
+
             if (this.anchor && this.canvas) {
                 if (['x', 'y'].includes(name as string)) {
-                    return this.resolveAxisPosition(name as 'x'|'y') as P[keyof P];
+                    computedValue = this.resolveAxisPosition(name as 'x'|'y') as P[keyof P];
                 } else if (['width', 'height'].includes(name as string)) {
-                    return this.resolveSideLength(name as 'width'|'height') as P[keyof P];
+                    computedValue = this.resolveSideLength(name as 'width'|'height') as P[keyof P];
                 }
             }
 
-            return this.props.get(name);
+            return computedValue;
         }
 
         this.props.set(name, value);
+    }
+
+    /**
+     * Handle mouse events of UI component such as MouseOver, MouseEnter and MouseLeave.
+     * 
+     * @param event event from event queue.
+     */
+    handleEvent(event: Core.Event): void {
+        if(!('x' in event) || !('y' in event) || !('alt' in event) || !('ctrl' in event) || !('shift' in event)) {
+            return;
+        }
+
+        let mouseOver = this.states.get('MouseOver');
+
+        if (this.bounds.includes({ x: event.x, y: event.y })) {
+            if (!mouseOver && this.onMouseEnter) {
+                this.onMouseEnter(event as Core.MouseOverEvent);
+            }
+
+            mouseOver = true;
+            this.states.set('MouseOver', mouseOver);
+
+            if (this.onMouseOver) {
+                this.onMouseOver(event as Core.MouseOverEvent);
+            }
+        } else {
+            if (mouseOver && this.onMouseLeave) {
+                event.type = 'MouseLeave';
+                this.onMouseLeave(event as Core.MouseOverEvent);
+            }
+
+            mouseOver = false;
+            this.states.set('MouseOver', mouseOver);
+        }
     }
 
     /**

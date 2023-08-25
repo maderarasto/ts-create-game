@@ -77,9 +77,7 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      */
     handleEvent(event: Core.Event): void {
         this.components.forEach((component) => {
-            if ('handleEvent' in component) {
-                (component as CanHandleEvent).handleEvent(event);
-            }
+            component.handleEvent(event);
         });
     }
     

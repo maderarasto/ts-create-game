@@ -22,6 +22,14 @@ export default class IntroState extends State {
             text: 'Hello World'
         });
 
+        text.onMouseEnter = (event) => {
+            console.log(event.type, event.x, event.y);
+        }
+
+        text.onMouseLeave = (event) => {
+            console.log(event.type, event.x, event.y);
+        }
+
         this.canvas.addElement('helloWorldText', text, {
             vertical: 'center',
             horizontal: 'center'
