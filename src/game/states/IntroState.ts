@@ -1,33 +1,36 @@
+import Rect from "../../framework/Core/Rect";
 import State from "../../framework/States/State";
 import StateStack from "../../framework/States/StateStack";
-import Image from "../../framework/UI/Image";
-import defines from "../../framework/defines";
+import Text from "../../framework/UI/Text";
 
 /**
  * Represents a first state after application started.
  */
 export default class IntroState extends State {
+    private rect1: Rect;
+    private rect2: Rect;
+
     constructor(stack: StateStack, context: States.Context) {
         super(stack, context);
 
-        context.assets.loadImage(`${defines.ASSETS_DIR}/images/sample.png`, 'SAMPLE').then(() => {
-            const asset = context.assets.get('image', 'SAMPLE');
-            const image = new Image({
-                source: asset
-            });
+        this.rect1 = new Rect(100, 100, 50, 50);
+        this.rect2 = this.rect1.clone();
 
-            this.canvas.addElement('img', image);
+        console.log(this.rect1.intersects(this.rect2));
+
+        const text = new Text({
+            text: 'Hello World'
         });
 
-        setTimeout(() => {
-            context.assets.loadImage(`${defines.ASSETS_DIR}/images/sheet_tanks.png`, 'SHEET_TANKS').then(() => {
-                const asset = context.assets.get('image', 'SHEET_TANKS');
-                this.canvas.findElement<UI.ImageProps>('img').prop('source', asset);
-            });
-        }, 5000);
+        this.canvas.addElement('helloWorldText', text, {
+            vertical: 'center',
+            horizontal: 'center'
+        });
     }
 
     handleEvent(event: Core.Event): boolean {
+        this.canvas.handleEvent(event);
+
         return true;
     }
 
@@ -38,6 +41,12 @@ export default class IntroState extends State {
     render(context: CanvasRenderingContext2D): void {
         context.fillStyle = 'white';
         context.fillRect(0, 0, this.context.config.default.width, this.context.config.default.height);
+
+        context.strokeStyle = 'black';
+        context.strokeRect(this.rect1.x, this.rect1.y, this.rect1.width, this.rect1.height);
+
+        context.strokeStyle = 'blue';
+        context.strokeRect(this.rect2.x, this.rect2.y, this.rect2.width, this.rect2.height);
 
         super.render(context);
     }

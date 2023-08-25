@@ -13,10 +13,10 @@ namespace Core {
      */
     type Constructor<T> = { new (...args: any): T}
 
-    /**
-     * Represents that will be parsed to number or boolean
-     */
-    type Parse<T> = T extends string ? string : T extends boolean ? boolean : number;
+    type Point = {
+        x: number
+        y: number
+    }
 
     /**
      * Represents a type event that can occur in event queue.
@@ -77,6 +77,10 @@ namespace Core {
 
     type KeyboardEvent = Event & {
         type: 'KeyDown'|'KeyUp'
+    }
+
+    type MouseMoveEvent = Event & {
+        type: 'MouseMove' | 'MouseEnter' | 'MouseLeave'
     }
 }
 

@@ -1,3 +1,6 @@
+/**
+ * Represents two dimensional structure of numbers.
+ */
 export default class Vector2 {
     constructor(
         public x: number = 0, 
