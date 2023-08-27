@@ -27,14 +27,14 @@ export default class Canvas implements CanHandleEvent, Updatable, Renderable {
      * @param element UI component.
      * @param anchor anchor on canvas.
      */
-    addElement<P>(id: string, element: Component<P>, anchor?: UI.Anchor) {
+    addElement<P extends UI.Props>(id: string, element: Component<P>, anchor?: UI.Anchor) {
         if (this.components.has(id)) {
             throw new Error(`UI component with id "${id}" already exist!`);
         }
 
         this.components.set(id, element as unknown as Component<UI.Props>);
         
-        if (anchor) {
+        if (anchor && Object.keys(anchor).length > 0) {
             element.setAnchorTo(anchor, this);
         }
     }
