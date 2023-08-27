@@ -28,14 +28,19 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
     public onMouseEnter?: (event: Core.MouseOverEvent) => void;
     public onMouseLeave?: (event: Core.MouseOverEvent) => void;
 
-    constructor(props: Partial<P>) {
+    constructor(props: Partial<P>, excludedKeys: Array<keyof P> = []) {
         this.props = new Map();
         this.states = new Map([
             ['MouseOver', false]
         ])
-        
+
+        const excludedPropKeys = new Set<keyof P>(excludedKeys);
         const defaultValues = this.getDefaultValues(this);
         Object.entries(defaultValues).forEach(([key, prop]) => {
+            if ([...excludedPropKeys].includes(key as keyof P)) {
+                return;
+            }
+
             type PropKey = keyof typeof props;
             const value = props[key as PropKey] !== undefined ? props[key as PropKey] : prop;
 
