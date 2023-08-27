@@ -30,14 +30,14 @@ export default class Text extends Component<UI.TextProps> {
     render(context: CanvasRenderingContext2D): void {
         super.render(context);
 
-        let x = this.prop('x') as number;
-        let y = this.prop('y') as number;
-        let width = this.prop('width') as number;
-        let height = this.prop('height') as number;
+        let x = this.prop<number>('x') + this.padding[3];
+        let y = this.prop<number>('y') + this.padding[0];
+        let width = this.prop<number>('width');
+        let height = this.prop<number>('height');
 
-        const text = this.prop('text') as string;
-        const textAlign = this.prop('textAlign') as UI.Alignment;
-        const verticalAlign = this.prop('verticalAlign') as UI.Alignment;
+        const text = this.prop<string>('text');
+        const textAlign = this.prop<UI.Alignment>('textAlign');
+        const verticalAlign = this.prop<UI.Alignment>('verticalAlign');
         const measurement = context.measureText(text);
 
         // Update box width if actual width of text is greater
@@ -56,8 +56,8 @@ export default class Text extends Component<UI.TextProps> {
         x = this.calculatePositionWithAlign(x, textAlign, width, measurement.width);
         y = this.calculatePositionWithAlign(y, verticalAlign, height, measurement.actualBoundingBoxDescent);
 
-        context.font = this.prop('font') as string;
-        context.fillStyle = this.prop('textColor') as string;
+        context.font = this.prop<string>('font');
+        context.fillStyle = this.prop<string>('textColor');
         context.textBaseline = 'top';
         
         context.fillText(text, x, y);

@@ -138,6 +138,18 @@ namespace UI {
         stretch: boolean
     }>
 
+    type Padding =  [
+        number,
+        number,
+        number,
+        number
+    ]
+
+    type PaddingAxis = [
+        number,
+        number
+    ]
+
     /**
      * Represents properties of UI component
      */
@@ -146,6 +158,7 @@ namespace UI {
         y: number
         width: number
         height: number
+        padding: number | PaddingAxis | Padding,
         borderColor: string
         backgroundColor: string
     }
@@ -172,7 +185,7 @@ namespace UI {
     /**
      * Represents properties of Text component.
      */
-    type ButtonProps = TextProps & {
+    type ButtonProps = Props & {
         highlightTextColor: string
         highlightBackgroundColor: string
         pressedTextColor: string

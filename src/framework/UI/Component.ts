@@ -13,12 +13,13 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         y: 0,
         width: 0,
         height: 0,
+        padding: [0, 0],
         borderColor: 'transparent',
         backgroundColor: 'transparent'
     }
 
     protected props: Map<keyof P, P[keyof P]>;
-    protected states: Map<Core.EventType, boolean>;
+    protected eventStates: Map<Core.EventType, boolean>;
     
     private canvas?: Canvas;
     private anchor?: UI.Anchor;
@@ -30,12 +31,13 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
 
     constructor(props: Partial<P>, excludedKeys: Array<keyof P> = []) {
         this.props = new Map();
-        this.states = new Map([
+        this.eventStates = new Map([
             ['MouseOver', false]
         ])
 
         const excludedPropKeys = new Set<keyof P>(excludedKeys);
         const defaultValues = this.getDefaultValues(this);
+        
         Object.entries(defaultValues).forEach(([key, prop]) => {
             if ([...excludedPropKeys].includes(key as keyof P)) {
                 return;
@@ -52,9 +54,36 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         return new Rect(
             this.prop('x') as number,
             this.prop('y') as number,
-            this.prop('width') as number,
-            this.prop('height') as number,
+            this.actualWidth,
+            this.actualHeight
         )
+    }
+
+    get padding(): Readonly<UI.Padding> {
+        const paddingProp = this.props.get('padding') as number | UI.PaddingAxis | UI.Padding;
+        const padding: UI.Padding = [0, 0, 0, 0];
+
+        if (typeof paddingProp === 'number') {
+            padding.fill(paddingProp);
+        } else if (Array.isArray(paddingProp) && paddingProp.length === 2) {
+            padding[0] = padding[2] = paddingProp[0];
+            padding[1] = padding[3] = paddingProp[1];
+        } else if (Array.isArray(padding) && padding.length === 4) {
+            padding[0] = paddingProp[0];
+            padding[1] = paddingProp[1];
+            padding[2] = paddingProp[2];
+            padding[3] = paddingProp[3];
+        }
+
+        return padding;
+    }
+
+    get actualWidth() {
+        return (this.props.get('width') as number) + this.padding[1] + this.padding[3];
+    }
+
+    get actualHeight() {
+        return (this.props.get('height') as number) + this.padding[0] + this.padding[2];
     }
 
     /**
@@ -81,7 +110,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
      * 
      * @param name name of property.
      */
-    prop(name: keyof P): P[keyof P];
+    prop<T extends P[keyof P]>(name: keyof P): T;
     
     /**
      * Set a new value to property.
@@ -90,19 +119,17 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
      * @param value new value of property.
      */
     prop(name: keyof P, value: P[keyof P]): void;
-    prop(name: keyof P, value?: P[keyof P]): P[keyof P] | void {
+    prop<T extends P[keyof P] = never>(name: keyof P, value?: P[keyof P]):T | void {
         if (value === undefined) {
             let computedValue = this.props.get(name);
 
-            if (this.anchor && this.canvas) {
-                if (['x', 'y'].includes(name as string)) {
-                    computedValue = this.resolveAxisPosition(name as 'x'|'y') as P[keyof P];
-                } else if (['width', 'height'].includes(name as string)) {
-                    computedValue = this.resolveSideLength(name as 'width'|'height') as P[keyof P];
-                }
+            if (['x', 'y'].includes(name as string)) {
+                computedValue = this.resolveAxisPosition(name === 'x' ? 'horizontal' : 'vertical') as T;
+            } else if (['width', 'height'].includes(name as string)) {
+                computedValue = this.resolveSideLength(name === 'width' ? 'horizontal' : 'vertical') as T;
             }
 
-            return computedValue;
+            return computedValue as T;
         }
 
         this.props.set(name, value);
@@ -118,7 +145,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
             return;
         }
 
-        let mouseOver = this.states.get('MouseOver');
+        let mouseOver = this.eventStates.get('MouseOver');
 
         if (this.bounds.includes({ x: event.x, y: event.y })) {
             if (!mouseOver && this.onMouseEnter) {
@@ -126,7 +153,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
             }
 
             mouseOver = true;
-            this.states.set('MouseOver', mouseOver);
+            this.eventStates.set('MouseOver', mouseOver);
 
             if (this.onMouseOver) {
                 this.onMouseOver(event as Core.MouseOverEvent);
@@ -138,7 +165,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
             }
 
             mouseOver = false;
-            this.states.set('MouseOver', mouseOver);
+            this.eventStates.set('MouseOver', mouseOver);
         }
     }
 
@@ -156,8 +183,8 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
             context.fillRect(
                 this.props.get('x' as keyof P) as number,
                 this.props.get('y' as keyof P) as number,
-                this.props.get('width' as keyof P) as number,
-                this.props.get('height' as keyof P) as number
+                this.actualWidth,
+                this.actualHeight
             );
         }
 
@@ -166,8 +193,8 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
             context.strokeRect(
                 this.props.get('x' as keyof P) as number,
                 this.props.get('y' as keyof P) as number,
-                this.props.get('width' as keyof P) as number,
-                this.props.get('height' as keyof P) as number
+                this.actualWidth,
+                this.actualHeight
             );
         }
     }
@@ -193,22 +220,28 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
      * @param axis axis type
      * @returns resolved position
      */
-    private resolveAxisPosition(axis: 'x'|'y') {
-        let position = (axis === 'x' ? this.props.get('x' as keyof P) : this.props.get('y' as keyof P)) as number;
-        const align = (axis === 'x' ? this.anchor?.horizontal : this.anchor?.vertical) as UI.Alignment;
-        const canvasPosition = (axis === 'x' ? this.canvas?.x : this.canvas?.y) as number;
-        const canvasSideLength = (axis === 'x' ? this.canvas?.width : this.canvas?.height) as number;
-        const componentSideLength = (axis === 'x' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
-        const offset = (axis === 'x' ? this.anchor?.offsetX ?? 0 : this.anchor?.offsetY ?? 0) as number;
+    private resolveAxisPosition(axis: 'horizontal'|'vertical') {
+        let position = (axis === 'horizontal' ? this.props.get('x' as keyof P) : this.props.get('y' as keyof P)) as number;
 
-        if (this.anchor?.stretch) {
+        if (!this.canvas || !this.anchor) {
+            return position;
+        }
+
+        const align = (axis === 'horizontal' ? this.anchor?.horizontal : this.anchor.vertical) as UI.Alignment;
+        const canvasPosition = (axis === 'horizontal' ? this.canvas.x : this.canvas.y) as number;
+        const canvasSideLength = (axis === 'horizontal' ? this.canvas.width : this.canvas.height) as number;
+        const componentSideLength = (axis === 'horizontal' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
+        const offset = (axis === 'horizontal' ? this.anchor?.offsetX ?? 0 : this.anchor.offsetY ?? 0) as number;
+        const paddingLength = (axis === 'horizontal' ? this.padding[1] + this.padding[3] : this.padding[0] + this.padding[2]);
+
+        if (this.anchor.stretch) {
             position = canvasPosition;
         } else if (align === 'start') {
             position = canvasPosition + offset;
         } else if (align === 'center') {
-            position = (canvasSideLength - componentSideLength) / 2 + offset;
+            position = (canvasSideLength - (componentSideLength + paddingLength)) / 2 + offset;
         }  else if (align === 'end') {
-            position = canvasPosition + canvasSideLength - componentSideLength - offset;
+            position = canvasPosition + canvasSideLength - (componentSideLength + paddingLength) - offset;
         }
 
         return position;
@@ -220,11 +253,16 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
      * @param side side of component.
      * @returns resolved side length.
      */
-    private resolveSideLength(side: 'width' | 'height') {
-        let sideLength = (side === 'width' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
-        const canvasSideLength = (side === 'width' ? this.canvas?.width : this.canvas?.height) as number;
+    private resolveSideLength(axis: 'horizontal' | 'vertical') {
+        let sideLength = (axis === 'horizontal' ? this.props.get('width' as keyof P) : this.props.get('height' as keyof P)) as number;
 
-        if (this.anchor?.stretch) {
+        if (!this.canvas || !this.anchor) {
+            return sideLength;
+        }
+
+        const canvasSideLength = (axis === 'horizontal' ? this.canvas.width : this.canvas.height) as number;
+
+        if (this.anchor.stretch) {
             sideLength = canvasSideLength;
         }
 
