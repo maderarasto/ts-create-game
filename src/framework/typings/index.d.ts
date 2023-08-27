@@ -167,4 +167,17 @@ namespace UI {
     type ImageProps = Props & {
         source?: HTMLImageElement
     }
+
+
+    /**
+     * Represents properties of Text component.
+     */
+    type ButtonProps = TextProps & {
+        highlightTextColor: string
+        highlightBackgroundColor: string
+        pressedTextColor: string
+        pressedBackgroundColor: string
+        //disabledTextColor: string
+        //disabledBackgroundColor: string
+    }
 }
