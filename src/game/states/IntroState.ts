@@ -1,7 +1,7 @@
 import Rect from "../../framework/Core/Rect";
 import State from "../../framework/States/State";
 import StateStack from "../../framework/States/StateStack";
-import Text from "../../framework/UI/Text";
+import TextButton from "../../framework/UI/TextButton";
 
 /**
  * Represents a first state after application started.
@@ -16,21 +16,16 @@ export default class IntroState extends State {
         this.rect1 = new Rect(100, 100, 50, 50);
         this.rect2 = this.rect1.clone();
 
-        console.log(this.rect1.intersects(this.rect2));
-
-        const text = new Text({
-            text: 'Hello World'
+        const button = new TextButton({
+            borderColor: 'green'
         });
 
-        text.onMouseEnter = (event) => {
-            console.log(event.type, event.x, event.y);
+        button.disabled = true;
+        button.onClick = function () {
+            console.log('CLick Me!');
         }
 
-        text.onMouseLeave = (event) => {
-            console.log(event.type, event.x, event.y);
-        }
-
-        this.canvas.addElement('helloWorldText', text, {
+        this.canvas.addElement('button', button, {
             vertical: 'center',
             horizontal: 'center'
         });
@@ -43,6 +38,8 @@ export default class IntroState extends State {
     }
 
     update(deltaTime: number): boolean {
+        this.canvas.update(deltaTime);
+
         return true;
     }
     

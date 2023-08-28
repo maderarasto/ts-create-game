@@ -92,6 +92,17 @@ namespace Core {
         ctrl: boolean
         shift: boolean
     }
+
+    type MouseButtonEvent = Event & {
+        type: 'MouseDown'|'MouseUp'
+        button: MouseButton
+        x: number
+        y: number
+        alt: boolean
+        ctrl: boolean
+        shift: boolean
+    }
+
 }
 
 namespace Entities {
@@ -185,12 +196,19 @@ namespace UI {
     /**
      * Represents properties of Text component.
      */
-    type ButtonProps = Props & {
+    type TextButtonProps = Props & {
         highlightTextColor: string
+        highlightBorderColor: string,
         highlightBackgroundColor: string
         pressedTextColor: string
+        pressedBorderColor: string,
         pressedBackgroundColor: string
-        //disabledTextColor: string
-        //disabledBackgroundColor: string
     }
+
+    type ButtonState = (
+        | 'Idle'
+        | 'Highlight'
+        | 'Pressed'
+        | 'Disabled'
+    )
 }

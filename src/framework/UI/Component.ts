@@ -19,7 +19,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
     }
 
     protected props: Map<keyof P, P[keyof P]>;
-    protected eventStates: Map<Core.EventType, boolean>;
+    protected eventStates: Map<string, boolean>;
     
     private canvas?: Canvas;
     private anchor?: UI.Anchor;
@@ -33,7 +33,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         this.props = new Map();
         this.eventStates = new Map([
             ['MouseOver', false]
-        ])
+        ]);
 
         const excludedPropKeys = new Set<keyof P>(excludedKeys);
         const defaultValues = this.getDefaultValues(this);
@@ -50,6 +50,9 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         })
     }
 
+    /**
+     * Actual bounds of component.
+     */
     get bounds(): Rect {
         return new Rect(
             this.prop('x') as number,
@@ -59,9 +62,17 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         )
     }
 
+    /**
+     * Padding of component in format of tuple: [top, right, bottom, left].
+     * If a component is stretched then padding will will always be zero.
+     */
     get padding(): Readonly<UI.Padding> {
         const paddingProp = this.props.get('padding') as number | UI.PaddingAxis | UI.Padding;
         const padding: UI.Padding = [0, 0, 0, 0];
+
+        if (this.canvas && this.anchor && this.anchor.stretch) {
+            return padding;
+        }
 
         if (typeof paddingProp === 'number') {
             padding.fill(paddingProp);
@@ -78,12 +89,38 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         return padding;
     }
 
+    /**
+     * Actual width in which the padding is included.
+     */
     get actualWidth() {
-        return (this.props.get('width') as number) + this.padding[1] + this.padding[3];
+        return (this.prop('width') as number) + this.padding[1] + this.padding[3];
     }
 
+    /**
+     * Actual height in which the padding is included.
+     */
     get actualHeight() {
-        return (this.props.get('height') as number) + this.padding[0] + this.padding[2];
+        return (this.prop('height') as number) + this.padding[0] + this.padding[2];
+    }
+
+    /**
+     * Check if component is idle without any event state.
+     * 
+     * @returns boolean result
+     */
+    isIdle() {
+        return [
+            ...this.eventStates.values()
+        ].every(value => !value);
+    }
+
+    /**
+     * Shutdown all events states.
+     */
+    shutDownEvents() {
+        this.eventStates.forEach((_, key, states) => {
+            states.set(key, false);
+        })
     }
 
     /**
@@ -147,7 +184,7 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
 
         let mouseOver = this.eventStates.get('MouseOver');
 
-        if (this.bounds.includes({ x: event.x, y: event.y })) {
+        if (event.type === 'MouseOver' && this.bounds.includes({ x: event.x, y: event.y })) {
             if (!mouseOver && this.onMouseEnter) {
                 this.onMouseEnter(event as Core.MouseOverEvent);
             }
@@ -181,8 +218,8 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         if (backgroundColor !== 'transparent') {
             context.fillStyle = backgroundColor as string;
             context.fillRect(
-                this.props.get('x' as keyof P) as number,
-                this.props.get('y' as keyof P) as number,
+                this.prop('x') as number,
+                this.prop('y') as number,
                 this.actualWidth,
                 this.actualHeight
             );
@@ -191,8 +228,8 @@ export default abstract class Component<P extends UI.Props> implements CanHandle
         if (borderColor !== 'transparent') {
             context.strokeStyle = borderColor as string;
             context.strokeRect(
-                this.props.get('x' as keyof P) as number,
-                this.props.get('y' as keyof P) as number,
+                this.prop('x') as number,
+                this.prop('y') as number,
                 this.actualWidth,
                 this.actualHeight
             );
