@@ -6,7 +6,8 @@ The project is a template for simple game using [TypeScript](https://www.typescr
 ## Table of Content
 1. [Motivation](#motivation)
 2. [State of project](#state-of-project)
-3. [Getting started](#gettings-started)
+3. [Configuration](#configuraiton)
+4. [Getting started](#gettings-started)
 
 ## Motivation
 This project was created for purpose to easily create game playable in browser for future projects and to apply [Typescript](https://www.typescriptlang.org/) and game design skills.
@@ -19,8 +20,24 @@ This project was created for purpose to easily create game playable in browser f
 ✅ Commands a command queue for simple execution of entity actions<br />
 ✅ Input controller for simple registration input keys for player<br />
 ✅ Application states and state stack<br />
+✅ UI library for simple rendering elements such as texts, static images, ...<br />
 
 #### In development
-⌛ UI library for simple rendering elements such as texts, static images, ...<br />
 ⌛ Collision systemm<br />
 ⌛ Animation using spritesheet<br />
+
+## Configuration
+This project is created with build tools [Vite](https://vitejs.dev/) so you have to install all dependeciens using NPM package system. If you do not have NPM you can install [Node.js](https://nodejs.org/en) which also includes NPM. After installation you can install project dependencies with command:
+```bash
+npm install
+```
+After setup you can start game application with comand:
+```bash
+npm run start
+```
+or alternitavely in development environment you can run applicaiton with watching changes in project using command:
+```bash
+npm run dev
+```
+
+## Getting started
